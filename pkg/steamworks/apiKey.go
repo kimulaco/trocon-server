@@ -9,7 +9,7 @@ type ApiKey struct {
 }
 
 func (t ApiKey) HasKey() bool {
-	return t.Key == ""
+	return t.Key != ""
 }
 
 func NewApiKey() ApiKey {

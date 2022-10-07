@@ -1,6 +1,7 @@
 package GetSteamUserDetailAPI
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/kimulaco/g-trophy/pkg/httputil"
@@ -14,14 +15,19 @@ type SuccessResponse struct {
 }
 
 func GetUserDetail(c echo.Context) error {
-	steamApiKey := steamworks.NewApiKey()
 	steamid := c.Param("steamid")
 
+	steamApiKey := steamworks.NewApiKey()
 	if !steamApiKey.HasKey() {
+		log.Print("STEAM_USER_ENVIROMENT_ERROR: undefined steam API key")
 		return c.JSON(httputil.NewError500("STEAM_USER_ENVIROMENT_ERROR", ""))
 	}
 
-	player, _ := steamworks.GetPlayerSummary(steamApiKey.Key, steamid)
+	player, err := steamworks.GetPlayerSummary(steamApiKey.Key, steamid)
+	if err != nil {
+		log.Print("STEAM_USER_INTERNAL_ERROR: " + err.Error())
+		return c.JSON(httputil.NewError500("STEAM_USER_INTERNAL_ERROR", ""))
+	}
 
 	if player.IsEmpty() {
 		return c.JSON(httputil.NewError404("STEAM_USER_NOT_FOUND", "user not found"))
