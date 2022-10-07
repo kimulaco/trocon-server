@@ -3,8 +3,8 @@ package steamworks
 import (
 	"net/http"
 
-	"github.com/kimulaco/g-trophy/pkg/httputil"
-	"github.com/kimulaco/g-trophy/pkg/urlx"
+	"github.com/kimulaco/g-trophy-server/pkg/httputil"
+	"github.com/kimulaco/g-trophy-server/pkg/urlx"
 )
 
 type GetPlayerAchievementsResponseOwnedGame struct {

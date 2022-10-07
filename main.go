@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/labstack/echo/v4"
 
-	GetSteamUserAPI "github.com/kimulaco/g-trophy/internal/api/getSteamUser"
-	GetSteamUserDetailAPI "github.com/kimulaco/g-trophy/internal/api/getSteamUserDetail"
-	GetSteamUserGamesAPI "github.com/kimulaco/g-trophy/internal/api/getSteamUserGames"
-	GetSteamUserTrophyAPI "github.com/kimulaco/g-trophy/internal/api/getSteamUserTrophy"
+	GetSteamUserAPI "github.com/kimulaco/g-trophy-server/internal/api/getSteamUser"
+	GetSteamUserDetailAPI "github.com/kimulaco/g-trophy-server/internal/api/getSteamUserDetail"
+	GetSteamUserGamesAPI "github.com/kimulaco/g-trophy-server/internal/api/getSteamUserGames"
+	GetSteamUserTrophyAPI "github.com/kimulaco/g-trophy-server/internal/api/getSteamUserTrophy"
 )
 
 func main() {

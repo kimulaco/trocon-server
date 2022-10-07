@@ -1,4 +1,4 @@
-module github.com/kimulaco/g-trophy
+module github.com/kimulaco/g-trophy-server
 
 go 1.19
 
