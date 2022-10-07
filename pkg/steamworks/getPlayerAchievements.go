@@ -28,7 +28,7 @@ func GetPlayerAchievements(
 	apiUrl.AddQuery("key", key)
 	apiUrl.AddQuery("steamid", steamid)
 	apiUrl.AddQuery("appid", appid)
-	apiUrl.AddQuery("l", "ja-JP")
+	apiUrl.AddQuery("l", "japanese")
 
 	res, err := http.Get(apiUrl.ToString())
 	if err != nil {

@@ -10,8 +10,8 @@ import (
 )
 
 type SuccessResponse struct {
-	StatusCode int                    `json:"statusCode"`
-	Games      []steamworks.OwnedGame `json:"games"`
+	StatusCode int               `json:"statusCode"`
+	Games      []steamworks.Game `json:"games"`
 }
 
 func GetSteamUserGames(c echo.Context) error {
@@ -23,7 +23,7 @@ func GetSteamUserGames(c echo.Context) error {
 		return c.JSON(httputil.NewError500("STEAM_OWNED_GAME_ENVIROMENT_ERROR", ""))
 	}
 
-	games, err := steamworks.GetOwnedGames(steamApiKey.Key, steamid)
+	ownedGames, err := steamworks.GetOwnedGames(steamApiKey.Key, steamid)
 	if err != nil {
 		log.Print("STEAM_OWNED_GAME_INTERNAL_ERROR: " + err.Error())
 		return c.JSON(httputil.NewError500("STEAM_OWNED_GAME_INTERNAL_ERROR", ""))
@@ -31,6 +31,6 @@ func GetSteamUserGames(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, SuccessResponse{
 		StatusCode: http.StatusOK,
-		Games:      games,
+		Games:      steamworks.MapOwnedGamesToGames(ownedGames),
 	})
 }

@@ -10,9 +10,9 @@ import (
 )
 
 type GetUserResponse struct {
-	StatusCode int                    `json:"statusCode"`
-	User       steamworks.Player      `json:"user"`
-	Games      []steamworks.OwnedGame `json:"games"`
+	StatusCode int               `json:"statusCode"`
+	User       steamworks.Player `json:"user"`
+	Games      []steamworks.Game `json:"games"`
 }
 
 func GetUser(c echo.Context) error {
@@ -34,7 +34,7 @@ func GetUser(c echo.Context) error {
 		return c.JSON(httputil.NewError404("STEAM_USER_NOT_FOUND", "user not found"))
 	}
 
-	games, err := steamworks.GetOwnedGames(steamApiKey.Key, steamid)
+	ownedGames, err := steamworks.GetOwnedGames(steamApiKey.Key, steamid)
 	if err != nil {
 		log.Print("STEAM_OWNED_GAME_INTERNAL_ERROR: " + err.Error())
 		return c.JSON(httputil.NewError500("STEAM_OWNED_GAME_INTERNAL_ERROR", ""))
@@ -43,6 +43,6 @@ func GetUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, GetUserResponse{
 		StatusCode: http.StatusOK,
 		User:       player,
-		Games:      games,
+		Games:      steamworks.MapOwnedGamesToGames(ownedGames),
 	})
 }
