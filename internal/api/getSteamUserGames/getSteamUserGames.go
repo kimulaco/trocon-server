@@ -1,4 +1,4 @@
-package GetOwnedGamesAPI
+package GetSteamUserGamesAPI
 
 import (
 	"log"
@@ -14,7 +14,7 @@ type SuccessResponse struct {
 	Games      []steamworks.OwnedGame `json:"games"`
 }
 
-func GetOwnedGames(c echo.Context) error {
+func GetSteamUserGames(c echo.Context) error {
 	steamid := c.Param("steamid")
 
 	steamApiKey := steamworks.NewApiKey()
