@@ -19,6 +19,10 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
+
 	e.GET("/api/steam/user/:steamid", GetSteamUserAPI.GetUser)
 	e.GET("/api/steam/user/:steamid/detail", GetSteamUserDetailAPI.GetUserDetail)
 	e.GET("/api/steam/user/:steamid/games", GetSteamUserGamesAPI.GetSteamUserGames)
