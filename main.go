@@ -4,11 +4,11 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	GetSteamUserAPI "github.com/kimulaco/g-trophy-server/internal/api/getSteamUser"
-	GetSteamUserDetailAPI "github.com/kimulaco/g-trophy-server/internal/api/getSteamUserDetail"
-	GetSteamUserGamesAPI "github.com/kimulaco/g-trophy-server/internal/api/getSteamUserGames"
-	GetSteamUserTrophyAPI "github.com/kimulaco/g-trophy-server/internal/api/getSteamUserTrophy"
-	"github.com/kimulaco/g-trophy-server/internal/config"
+	GetSteamUserAPI "github.com/kimulaco/trophy-comp-server/internal/api/getSteamUser"
+	GetSteamUserDetailAPI "github.com/kimulaco/trophy-comp-server/internal/api/getSteamUserDetail"
+	GetSteamUserGamesAPI "github.com/kimulaco/trophy-comp-server/internal/api/getSteamUserGames"
+	GetSteamUserTrophyAPI "github.com/kimulaco/trophy-comp-server/internal/api/getSteamUserTrophy"
+	"github.com/kimulaco/trophy-comp-server/internal/config"
 )
 
 func main() {

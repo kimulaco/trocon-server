@@ -3,8 +3,8 @@ package steamworks
 import (
 	"net/http"
 
-	"github.com/kimulaco/g-trophy-server/pkg/httputil"
-	"github.com/kimulaco/g-trophy-server/pkg/urlx"
+	"github.com/kimulaco/trophy-comp-server/pkg/httputil"
+	"github.com/kimulaco/trophy-comp-server/pkg/urlx"
 )
 
 type GetPlayerSummaryResponsePlayers struct {
