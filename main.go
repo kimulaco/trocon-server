@@ -28,5 +28,5 @@ func main() {
 	e.GET("/api/steam/user/:steamid/games", GetSteamUserGamesAPI.GetSteamUserGames)
 	e.GET("/api/steam/user/:steamid/trophy", GetSteamUserTrophyAPI.GetSteamUserTrophy)
 
-	e.Logger.Fatal(e.Start(":9000"))
+	e.Logger.Fatal(e.Start(config.GetListenPort("9000")))
 }
