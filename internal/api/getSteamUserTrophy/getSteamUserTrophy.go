@@ -3,21 +3,27 @@ package GetSteamUserTrophyAPI
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/kimulaco/trophy-comp-server/pkg/httputil"
 	"github.com/kimulaco/trophy-comp-server/pkg/steamworks"
 	"github.com/labstack/echo/v4"
 )
 
+type Trophy struct {
+	Success      bool                     `json:"success"`
+	GameName     string                   `json:"gameName"`
+	Achievements []steamworks.Achievement `json:"trophies"`
+}
+
 type SuccessResponse struct {
-	StatusCode int                      `json:"statusCode"`
-	GameName   string                   `json:"gameName"`
-	Trophies   []steamworks.Achievement `json:"trophies"`
+	StatusCode int      `json:"statusCode"`
+	Trophies   []Trophy `json:"trophies"`
 }
 
 func GetSteamUserTrophy(c echo.Context) error {
 	steamid := c.Param("steamid")
-	appid := c.QueryParam("appid")
+	appids := strings.Split(c.QueryParam("appid"), ",")
 
 	steamApiKey := steamworks.NewApiKey()
 	if !steamApiKey.HasKey() {
@@ -25,15 +31,26 @@ func GetSteamUserTrophy(c echo.Context) error {
 		return c.JSON(httputil.NewError500("STEAM_USER_TROPHY_ENVIROMENT_ERROR", ""))
 	}
 
-	trophies, err := steamworks.GetPlayerAchievements(steamApiKey.Key, steamid, appid)
-	if err != nil {
-		log.Print("STEAM_USER_TROPHY_INTERNAL_ERROR: " + err.Error())
-		return c.JSON(httputil.NewError500("STEAM_USER_TROPHY_INTERNAL_ERROR", ""))
+	var trophies []Trophy
+
+	for _, appid := range appids {
+		game, err := steamworks.GetPlayerAchievements(steamApiKey.Key, steamid, appid)
+		success := true
+
+		if err != nil {
+			log.Print("STEAM_USER_TROPHY_INTERNAL_ERROR: " + err.Error())
+			success = false
+		}
+
+		trophies = append(trophies, Trophy{
+			Success:      success,
+			GameName:     game.GameName,
+			Achievements: game.Achievements,
+		})
 	}
 
 	return c.JSON(http.StatusOK, SuccessResponse{
 		StatusCode: http.StatusOK,
-		GameName:   trophies.GameName,
-		Trophies:   trophies.Achievements,
+		Trophies:   trophies,
 	})
 }

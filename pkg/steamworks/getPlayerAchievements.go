@@ -1,6 +1,7 @@
 package steamworks
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/kimulaco/trophy-comp-server/pkg/httputil"
@@ -10,6 +11,10 @@ import (
 type GetPlayerAchievementsResponseOwnedGame struct {
 	GameName     string        `json:"gameName"`
 	Achievements []Achievement `json:"achievements"`
+}
+
+func (g GetPlayerAchievementsResponseOwnedGame) IsEmpty() bool {
+	return g.GameName == ""
 }
 
 type GetPlayerAchievementsResponse struct {
@@ -42,6 +47,10 @@ func GetPlayerAchievements(
 	}
 
 	response = resBody.PlayerStats
+
+	if response.IsEmpty() {
+		return response, errors.New("game not found")
+	}
 
 	return response, nil
 }
