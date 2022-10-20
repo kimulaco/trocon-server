@@ -48,8 +48,12 @@ func GetPlayerAchievements(
 
 	response = resBody.PlayerStats
 
+	if response.Achievements == nil {
+		response.Achievements = []Achievement{}
+	}
+
 	if response.IsEmpty() {
-		return response, errors.New("game not found")
+		return response, errors.New("appid:" + appid + " not found")
 	}
 
 	return response, nil

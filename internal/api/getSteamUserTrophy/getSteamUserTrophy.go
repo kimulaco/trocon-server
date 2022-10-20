@@ -3,6 +3,7 @@ package GetSteamUserTrophyAPI
 import (
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/kimulaco/trophy-comp-server/pkg/httputil"
@@ -12,6 +13,7 @@ import (
 
 type Trophy struct {
 	Success      bool                     `json:"success"`
+	AppId        int                      `json:"appId"`
 	GameName     string                   `json:"gameName"`
 	Achievements []steamworks.Achievement `json:"trophies"`
 }
@@ -34,6 +36,7 @@ func GetSteamUserTrophy(c echo.Context) error {
 	var trophies []Trophy
 
 	for _, appid := range appids {
+		appidInt, _ := strconv.Atoi(appid)
 		game, err := steamworks.GetPlayerAchievements(steamApiKey.Key, steamid, appid)
 		success := true
 
@@ -44,6 +47,7 @@ func GetSteamUserTrophy(c echo.Context) error {
 
 		trophies = append(trophies, Trophy{
 			Success:      success,
+			AppId:        appidInt,
 			GameName:     game.GameName,
 			Achievements: game.Achievements,
 		})
