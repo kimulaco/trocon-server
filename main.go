@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
+	GetStatusAPI "github.com/kimulaco/trophy-comp-server/internal/api/getStatus"
 	GetSteamUserAPI "github.com/kimulaco/trophy-comp-server/internal/api/getSteamUser"
 	GetSteamUserDetailAPI "github.com/kimulaco/trophy-comp-server/internal/api/getSteamUserDetail"
 	GetSteamUserGamesAPI "github.com/kimulaco/trophy-comp-server/internal/api/getSteamUserGames"
@@ -22,6 +23,8 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
+
+	e.GET("/api/status", GetStatusAPI.GetStatus)
 
 	e.GET("/api/steam/user/:steamid", GetSteamUserAPI.GetUser)
 	e.GET("/api/steam/user/:steamid/detail", GetSteamUserDetailAPI.GetUserDetail)
