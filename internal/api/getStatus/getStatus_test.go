@@ -16,6 +16,8 @@ var (
 )
 
 func TestGetStatus200(t *testing.T) {
+	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
+
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rec := httptest.NewRecorder()
