@@ -17,14 +17,14 @@ type GetUserResponse struct {
 
 func GetUser(c echo.Context) error {
 	steamid := c.Param("steamid")
+	s := steamworks.NewSteamworks()
 
-	steamApiKey := steamworks.NewApiKey()
-	if !steamApiKey.HasKey() {
+	if s.InvalidEnv() {
 		log.Print("STEAM_USER_ENVIROMENT_ERROR: undefined steam API key")
 		return c.JSON(httputil.NewError500("STEAM_USER_ENVIROMENT_ERROR", ""))
 	}
 
-	player, err := steamworks.GetPlayerSummary(steamApiKey.Key, steamid)
+	player, err := s.GetPlayerSummary(steamid)
 	if err != nil {
 		log.Print("STEAM_USER_INTERNAL_ERROR: " + err.Error())
 		return c.JSON(httputil.NewError500("STEAM_USER_INTERNAL_ERROR", ""))
@@ -34,7 +34,7 @@ func GetUser(c echo.Context) error {
 		return c.JSON(httputil.NewError404("STEAM_USER_NOT_FOUND", "user not found"))
 	}
 
-	ownedGames, err := steamworks.GetOwnedGames(steamApiKey.Key, steamid)
+	ownedGames, err := s.GetOwnedGames(steamid)
 	if err != nil {
 		log.Print("STEAM_OWNED_GAME_INTERNAL_ERROR: " + err.Error())
 		return c.JSON(httputil.NewError500("STEAM_OWNED_GAME_INTERNAL_ERROR", ""))

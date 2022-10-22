@@ -14,8 +14,8 @@ type GetUserResponse struct {
 }
 
 func GetStatus(c echo.Context) error {
-	steamApiKey := steamworks.NewApiKey()
-	if !steamApiKey.HasKey() {
+	s := steamworks.NewSteamworks()
+	if s.InvalidEnv() {
 		log.Print("STATUS_ENVIROMENT_ERROR: undefined steam API key")
 		return c.JSON(httputil.NewError500("STATUS_ENVIROMENT_ERROR", ""))
 	}

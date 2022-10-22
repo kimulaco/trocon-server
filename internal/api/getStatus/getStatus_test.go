@@ -17,6 +17,7 @@ var (
 
 func TestGetStatus200(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
+	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -31,6 +32,7 @@ func TestGetStatus200(t *testing.T) {
 
 func TestGetStatusEnvError(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "")
+	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
