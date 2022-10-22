@@ -1,3 +1,3 @@
 # bin/bash
 
-go test -cover ./... -race -coverprofile=coverage.out -covermode=atomic
+go test -cover ./... -coverpkg ./... -race -coverprofile=coverage.out -covermode=atomic
