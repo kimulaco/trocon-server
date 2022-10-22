@@ -1,6 +1,7 @@
 package urlx
 
 import (
+	"errors"
 	"net/url"
 )
 
@@ -12,7 +13,7 @@ func NewUrlx(urlString string) (Urlx, error) {
 	url, err := url.Parse(urlString)
 
 	if err != nil {
-		return Urlx{}, err
+		return Urlx{}, errors.New(err.Error())
 	}
 
 	return Urlx{
