@@ -9,16 +9,16 @@ on:
       - '**'
 
 jobs:
-  test:
+  test_unit:
     name: Unit Test
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
           go-version: 1.19
-    - name: go test
-        run: go test -race -coverprofile=coverage.out -covermode=atomic
+      - name: go test
+        run: sh scripts/test.sh
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
