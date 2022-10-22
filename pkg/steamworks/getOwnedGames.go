@@ -14,10 +14,12 @@ type GetOwnedGamesResponse struct {
 	} `json:"response"`
 }
 
+const GetOwnedGamesPath = "/IPlayerService/GetOwnedGames/v1/"
+
 func (s Steamworks) GetOwnedGames(steamid string) ([]OwnedGame, error) {
 	var ownedGames []OwnedGame
 
-	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + "/IPlayerService/GetOwnedGames/v1/")
+	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + GetOwnedGamesPath)
 	apiUrl.AddQuery("key", s.APIKey)
 	apiUrl.AddQuery("steamid", steamid)
 	apiUrl.AddQuery("include_appinfo", "true")
