@@ -1,6 +1,7 @@
 package steamworks
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/kimulaco/trophy-comp-server/pkg/httputil"
@@ -18,6 +19,10 @@ const GetPlayerSummaryPath = "/ISteamUser/GetPlayerSummaries/v2/"
 func (s Steamworks) GetPlayerSummary(steamid string) (Player, error) {
 	var player Player
 
+	if steamid == "" {
+		return player, errors.New("steamid is required")
+	}
+
 	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + GetPlayerSummaryPath)
 	apiUrl.AddQuery("key", s.APIKey)
 	apiUrl.AddQuery("steamids", steamid)
@@ -27,6 +32,10 @@ func (s Steamworks) GetPlayerSummary(steamid string) (Player, error) {
 		return player, err
 	}
 	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return player, errors.New(res.Status)
+	}
 
 	resBody, err := httputil.ReadBody[GetPlayerSummaryResponse](res)
 	if err != nil {

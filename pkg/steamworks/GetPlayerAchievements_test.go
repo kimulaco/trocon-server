@@ -1,6 +1,7 @@
 package steamworks
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/h2non/gock"
@@ -25,6 +26,31 @@ func TestGetPlayerAchievements(t *testing.T) {
 	}
 
 	assert.Equal(t, Game, GetPlayerAchievementsResponse200.PlayerStats)
+}
+
+func TestGetPlayerAchievementsError(t *testing.T) {
+	const baseUrl = "http://localhost:9999"
+	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
+	t.Setenv("STEAM_API_BASE_URL", baseUrl)
+	s := NewSteamworks()
+
+	defer gock.Off()
+	r := gock.New(baseUrl)
+
+	r.Get(GetPlayerAchievementsPath).Reply(200).JSON(GetPlayerAchievementsResponse200)
+	res1, err1 := s.GetPlayerAchievements("", "1")
+	assert.Equal(t, res1, GetPlayerAchievementsResponseOwnedGame{})
+	assert.Equal(t, err1, errors.New("steamid is required"))
+
+	r.Get(GetPlayerAchievementsPath).Reply(200).JSON(GetPlayerAchievementsResponse200)
+	res2, err2 := s.GetPlayerAchievements("1", "")
+	assert.Equal(t, res2, GetPlayerAchievementsResponseOwnedGame{})
+	assert.Equal(t, err2, errors.New("appid is required"))
+
+	r.Get(GetPlayerAchievementsPath).Reply(403).JSON(Response403)
+	res3, err3 := s.GetPlayerAchievements("1", "1")
+	assert.Equal(t, res3, GetPlayerAchievementsResponseOwnedGame{})
+	assert.Equal(t, err3, errors.New("403 Forbidden"))
 }
 
 var GetPlayerAchievementsResponse200 = GetPlayerAchievementsResponse{

@@ -27,3 +27,16 @@ func TestInvalidEnv(t *testing.T) {
 	assert.Equal(t, s.APIBaseURL, "")
 	assert.Equal(t, s.InvalidEnv(), true)
 }
+
+var Response403 = `<html>
+
+<head>
+	<title>Forbidden</title>
+</head>
+
+<body>
+	<h1>Forbidden</h1>Access is denied. Retrying will not help. Please verify your
+	<pre>key=</pre> parameter.
+</body>
+
+</html>`

@@ -25,6 +25,14 @@ func (s Steamworks) GetPlayerAchievements(
 ) (GetPlayerAchievementsResponseOwnedGame, error) {
 	var response GetPlayerAchievementsResponseOwnedGame
 
+	if steamid == "" {
+		return response, errors.New("steamid is required")
+	}
+
+	if appid == "" {
+		return response, errors.New("appid is required")
+	}
+
 	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + GetPlayerAchievementsPath)
 	apiUrl.AddQuery("key", s.APIKey)
 	apiUrl.AddQuery("steamid", steamid)
@@ -36,6 +44,10 @@ func (s Steamworks) GetPlayerAchievements(
 		return response, err
 	}
 	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return response, errors.New(res.Status)
+	}
 
 	resBody, err := httputil.ReadBody[GetPlayerAchievementsResponse](res)
 	if err != nil {

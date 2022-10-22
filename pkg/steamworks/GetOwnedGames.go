@@ -1,6 +1,7 @@
 package steamworks
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/kimulaco/trophy-comp-server/pkg/httputil"
@@ -17,7 +18,11 @@ type GetOwnedGamesResponse struct {
 const GetOwnedGamesPath = "/IPlayerService/GetOwnedGames/v1/"
 
 func (s Steamworks) GetOwnedGames(steamid string) ([]OwnedGame, error) {
-	var ownedGames []OwnedGame
+	ownedGames := make([]OwnedGame, 0)
+
+	if steamid == "" {
+		return ownedGames, errors.New("steamid is required")
+	}
 
 	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + GetOwnedGamesPath)
 	apiUrl.AddQuery("key", s.APIKey)
@@ -30,6 +35,10 @@ func (s Steamworks) GetOwnedGames(steamid string) ([]OwnedGame, error) {
 		return ownedGames, err
 	}
 	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return ownedGames, errors.New(res.Status)
+	}
 
 	resBody, err := httputil.ReadBody[GetOwnedGamesResponse](res)
 	if err != nil {

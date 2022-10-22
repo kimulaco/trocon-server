@@ -1,6 +1,7 @@
 package steamworks
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/h2non/gock"
@@ -27,16 +28,24 @@ func TestGetPlayerSummary(t *testing.T) {
 	assert.Equal(t, player, TestUser)
 }
 
-var TestUser = Player{
-	SteamID:                  "0",
-	CommunityVisibilityState: 3,
-	ProfileState:             1,
-	PersonaName:              "trophy-comp-user",
-	LastLogoff:               1640962800,
-	ProfileUrl:               "http://localhost:9999/id/0/",
-	Avatar:                   "http://localhost:9999/avatar.jpg",
-	AvatarMedium:             "http://localhost:9999/avatar_medium.jpg",
-	AvatarFull:               "http://localhost:9999/avatar_full.jpg",
+func TestGetPlayerSummaryError(t *testing.T) {
+	const baseUrl = "http://localhost:9999"
+	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
+	t.Setenv("STEAM_API_BASE_URL", baseUrl)
+	s := NewSteamworks()
+
+	defer gock.Off()
+	r := gock.New(baseUrl)
+
+	r.Get(GetPlayerSummaryPath).Reply(200).JSON(GetPlayerSummaryResponse200)
+	player1, err1 := s.GetPlayerSummary("")
+	assert.Equal(t, player1, Player{})
+	assert.Equal(t, err1, errors.New("steamid is required"))
+
+	r.Get(GetPlayerSummaryPath).Reply(403).JSON(Response403)
+	player2, err2 := s.GetPlayerSummary("1")
+	assert.Equal(t, player2, Player{})
+	assert.Equal(t, err2, errors.New("403 Forbidden"))
 }
 
 var GetPlayerSummaryResponse200 = GetPlayerSummaryResponse{
