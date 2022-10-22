@@ -17,13 +17,15 @@ type GetPlayerAchievementsResponse struct {
 	PlayerStats GetPlayerAchievementsResponseOwnedGame `json:"playerstats"`
 }
 
+const GetPlayerAchievementsPath = "/ISteamUserStats/GetPlayerAchievements/v1/"
+
 func (s Steamworks) GetPlayerAchievements(
 	steamid string,
 	appid string,
 ) (GetPlayerAchievementsResponseOwnedGame, error) {
 	var response GetPlayerAchievementsResponseOwnedGame
 
-	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + "/ISteamUserStats/GetPlayerAchievements/v1/")
+	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + GetPlayerAchievementsPath)
 	apiUrl.AddQuery("key", s.APIKey)
 	apiUrl.AddQuery("steamid", steamid)
 	apiUrl.AddQuery("appid", appid)
