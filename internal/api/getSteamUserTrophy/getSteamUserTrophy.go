@@ -26,9 +26,9 @@ type SuccessResponse struct {
 func GetSteamUserTrophy(c echo.Context) error {
 	steamid := c.Param("steamid")
 	appids := strings.Split(c.QueryParam("appid"), ",")
+	s := steamworks.NewSteamworks()
 
-	steamApiKey := steamworks.NewApiKey()
-	if !steamApiKey.HasKey() {
+	if s.InvalidEnv() {
 		log.Print("STEAM_USER_TROPHY_ENVIROMENT_ERROR: undefined steam API key")
 		return c.JSON(httputil.NewError500("STEAM_USER_TROPHY_ENVIROMENT_ERROR", ""))
 	}
@@ -37,7 +37,7 @@ func GetSteamUserTrophy(c echo.Context) error {
 
 	for _, appid := range appids {
 		appidInt, _ := strconv.Atoi(appid)
-		game, err := steamworks.GetPlayerAchievements(steamApiKey.Key, steamid, appid)
+		game, err := s.GetPlayerAchievements(steamid, appid)
 		success := true
 
 		if err != nil {

@@ -1,26 +1,30 @@
 package steamworks
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/kimulaco/trophy-comp-server/pkg/httputil"
 	"github.com/kimulaco/trophy-comp-server/pkg/urlx"
 )
 
-type GetPlayerSummaryResponsePlayers struct {
-	Players []Player `json:"players"`
-}
-
 type GetPlayerSummaryResponse struct {
-	Response GetPlayerSummaryResponsePlayers `json:"response"`
+	Response struct {
+		Players []Player `json:"players"`
+	} `json:"response"`
 }
 
-func GetPlayerSummary(key string, steamid string) (Player, error) {
-	const _API_URL = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/"
+const GetPlayerSummaryPath = "/ISteamUser/GetPlayerSummaries/v2/"
+
+func (s Steamworks) GetPlayerSummary(steamid string) (Player, error) {
 	var player Player
 
-	apiUrl, _ := urlx.NewUrlx(_API_URL)
-	apiUrl.AddQuery("key", key)
+	if steamid == "" {
+		return player, errors.New("steamid is required")
+	}
+
+	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + GetPlayerSummaryPath)
+	apiUrl.AddQuery("key", s.APIKey)
 	apiUrl.AddQuery("steamids", steamid)
 
 	res, err := http.Get(apiUrl.ToString())
@@ -28,6 +32,10 @@ func GetPlayerSummary(key string, steamid string) (Player, error) {
 		return player, err
 	}
 	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return player, errors.New(res.Status)
+	}
 
 	resBody, err := httputil.ReadBody[GetPlayerSummaryResponse](res)
 	if err != nil {

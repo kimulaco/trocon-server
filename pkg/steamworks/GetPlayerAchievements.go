@@ -13,24 +13,28 @@ type GetPlayerAchievementsResponseOwnedGame struct {
 	Achievements []Achievement `json:"achievements"`
 }
 
-func (g GetPlayerAchievementsResponseOwnedGame) IsEmpty() bool {
-	return g.GameName == ""
-}
-
 type GetPlayerAchievementsResponse struct {
 	PlayerStats GetPlayerAchievementsResponseOwnedGame `json:"playerstats"`
 }
 
-func GetPlayerAchievements(
-	key string,
+const GetPlayerAchievementsPath = "/ISteamUserStats/GetPlayerAchievements/v1/"
+
+func (s Steamworks) GetPlayerAchievements(
 	steamid string,
 	appid string,
 ) (GetPlayerAchievementsResponseOwnedGame, error) {
-	const _API_URL = "https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/"
 	var response GetPlayerAchievementsResponseOwnedGame
 
-	apiUrl, _ := urlx.NewUrlx(_API_URL)
-	apiUrl.AddQuery("key", key)
+	if steamid == "" {
+		return response, errors.New("steamid is required")
+	}
+
+	if appid == "" {
+		return response, errors.New("appid is required")
+	}
+
+	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + GetPlayerAchievementsPath)
+	apiUrl.AddQuery("key", s.APIKey)
 	apiUrl.AddQuery("steamid", steamid)
 	apiUrl.AddQuery("appid", appid)
 	apiUrl.AddQuery("l", "japanese")
@@ -40,6 +44,10 @@ func GetPlayerAchievements(
 		return response, err
 	}
 	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return response, errors.New(res.Status)
+	}
 
 	resBody, err := httputil.ReadBody[GetPlayerAchievementsResponse](res)
 	if err != nil {
@@ -52,7 +60,7 @@ func GetPlayerAchievements(
 		response.Achievements = []Achievement{}
 	}
 
-	if response.IsEmpty() {
+	if response.GameName == "" {
 		return response, errors.New("appid:" + appid + " not found")
 	}
 
