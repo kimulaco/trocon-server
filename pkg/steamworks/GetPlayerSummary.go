@@ -13,10 +13,12 @@ type GetPlayerSummaryResponse struct {
 	} `json:"response"`
 }
 
+const GetPlayerSummaryPath = "/ISteamUser/GetPlayerSummaries/v2/"
+
 func (s Steamworks) GetPlayerSummary(steamid string) (Player, error) {
 	var player Player
 
-	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + "/ISteamUser/GetPlayerSummaries/v2/")
+	apiUrl, _ := urlx.NewUrlx(s.APIBaseURL + GetPlayerSummaryPath)
 	apiUrl.AddQuery("key", s.APIKey)
 	apiUrl.AddQuery("steamids", steamid)
 
