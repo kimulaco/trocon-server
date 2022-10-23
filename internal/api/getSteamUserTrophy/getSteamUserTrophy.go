@@ -48,7 +48,7 @@ func GetSteamUserTrophy(c echo.Context) error {
 		success := true
 
 		if err != nil {
-			log.Print("STEAM_USER_TROPHY_INTERNAL_ERROR: " + err.Error())
+			log.Print("STEAM_USER_TROPHY_INTERNAL_ERROR: appid:" + appid + " " + err.Error())
 			success = false
 		}
 
