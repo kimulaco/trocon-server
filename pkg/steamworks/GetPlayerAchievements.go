@@ -56,8 +56,8 @@ func (s Steamworks) GetPlayerAchievements(
 
 	response = resBody.PlayerStats
 
-	if response.Achievements == nil {
-		response.Achievements = []Achievement{}
+	if response.Achievements == nil || len(response.Achievements) <= 0 {
+		response.Achievements = make([]Achievement, 0)
 	}
 
 	if response.GameName == "" {
