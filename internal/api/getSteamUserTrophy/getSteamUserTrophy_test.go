@@ -55,11 +55,31 @@ func TestGetSteamUserTrophy_AppidNotFound(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
 	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
+	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "")
+	c.SetParamNames("steamid")
+	c.SetParamValues("1")
+
+	if assert.NoError(t, GetSteamUserTrophy(c)) {
+		assert.Equal(t, 400, rec.Code)
+		resBody, err := httputil.ReadBody[httputil.Error](rec.Result())
+		assert.Equal(t, nil, err)
+		assert.Equal(t, httputil.NewError(
+			400,
+			"STEAM_USER_TROPHY_APPID_NOT_FOUND",
+			errors.New("appid not found"),
+		), resBody)
+	}
+}
+
+func TestGetSteamUserTrophy_AppNotFound(t *testing.T) {
+	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
+	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
+
 	defer gock.Off()
 	testdata.InitGock(testdata.GockConfig{
 		Url:      "http://localhost:9999",
 		Path:     steamworks.GetPlayerAchievementsPath,
-		Response: GetSteamUserTrophy_AppidNotFound,
+		Response: GetSteamUserTrophy_AppNotFound,
 	})
 
 	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid=1")
@@ -70,7 +90,7 @@ func TestGetSteamUserTrophy_AppidNotFound(t *testing.T) {
 		assert.Equal(t, 200, rec.Code)
 		resBody, err := httputil.ReadBody[SuccessResponse](rec.Result())
 		assert.Equal(t, nil, err)
-		assert.Equal(t, SuccessResponse_AppidNotFound, resBody)
+		assert.Equal(t, SuccessResponse_AppNotFound, resBody)
 	}
 }
 
@@ -128,7 +148,7 @@ func TestGetSteamUserTrophy_TwoAppid(t *testing.T) {
 	}
 }
 
-var SuccessResponse_AppidNotFound = SuccessResponse{
+var SuccessResponse_AppNotFound = SuccessResponse{
 	StatusCode: 200,
 	Trophies: []Trophy{
 		{
@@ -170,7 +190,7 @@ var SuccessResponse_TwoAppid = SuccessResponse{
 	},
 }
 
-var GetSteamUserTrophy_AppidNotFound = steamworks.GetPlayerAchievementsResponse{
+var GetSteamUserTrophy_AppNotFound = steamworks.GetPlayerAchievementsResponse{
 	PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
 		GameName:     "",
 		Achievements: make([]steamworks.Achievement, 0),
