@@ -47,27 +47,3 @@ func TestMapOwnedGamesToGames(t *testing.T) {
 		},
 	})
 }
-
-var TestGame1 = OwnedGame{
-	AppId:                    1,
-	Name:                     "Trophy Comp Game 1",
-	ImgIconUrl:               "icon_hash",
-	HasCommunityVisibleStats: true,
-	PlaytimeForever:          1110,
-	PlaytimeWindowsForever:   1000,
-	PlaytimeMacForever:       100,
-	PlaytimeLinuxForever:     10,
-	RtimeLastPlayed:          0,
-}
-
-var TestGame2 = OwnedGame{
-	AppId:                    2,
-	Name:                     "Trophy Comp Game 2",
-	ImgIconUrl:               "icon_hash2",
-	HasCommunityVisibleStats: false,
-	PlaytimeForever:          1000,
-	PlaytimeWindowsForever:   1000,
-	PlaytimeMacForever:       0,
-	PlaytimeLinuxForever:     0,
-	RtimeLastPlayed:          0,
-}

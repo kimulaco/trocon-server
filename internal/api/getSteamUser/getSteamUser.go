@@ -1,4 +1,4 @@
-package getSteamUserAPI
+package GetSteamUserAPI
 
 import (
 	"log"
@@ -16,12 +16,15 @@ type GetUserResponse struct {
 }
 
 func GetUser(c echo.Context) error {
-	steamid := c.Param("steamid")
 	s := steamworks.NewSteamworks()
-
 	if s.InvalidEnv() {
 		log.Print("STEAM_USER_ENVIROMENT_ERROR: undefined steam API key")
 		return c.JSON(httputil.NewError500("STEAM_USER_ENVIROMENT_ERROR", ""))
+	}
+
+	steamid := c.Param("steamid")
+	if steamid == "" {
+		return c.JSON(httputil.NewError400("STEAM_USER_STEAMID_NOT_FOUND", "steamid not found"))
 	}
 
 	player, err := s.GetPlayerSummary(steamid)
