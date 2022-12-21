@@ -55,18 +55,25 @@ func TestGetPlayerAchievements_Error(t *testing.T) {
 
 	r.Get(GetPlayerAchievementsPath).Reply(200).JSON(GetPlayerAchievementsResponse200)
 	res1, err1 := s.GetPlayerAchievements("", "1")
-	assert.Equal(t, res1, GetPlayerAchievementsResponseOwnedGame{})
+	assert.Equal(t, res1, EmptyOwnedGame)
 	assert.Equal(t, err1, errors.New("steamid is required"))
 
 	r.Get(GetPlayerAchievementsPath).Reply(200).JSON(GetPlayerAchievementsResponse200)
 	res2, err2 := s.GetPlayerAchievements("1", "")
-	assert.Equal(t, res2, GetPlayerAchievementsResponseOwnedGame{})
+	assert.Equal(t, res2, EmptyOwnedGame)
 	assert.Equal(t, err2, errors.New("appid is required"))
 
 	r.Get(GetPlayerAchievementsPath).Reply(403).JSON(Response403)
 	res3, err3 := s.GetPlayerAchievements("1", "1")
-	assert.Equal(t, res3, GetPlayerAchievementsResponseOwnedGame{})
+	assert.Equal(t, res3, EmptyOwnedGame)
 	assert.Equal(t, err3, errors.New("403 Forbidden"))
+}
+
+var EmptyOwnedGame = GetPlayerAchievementsResponseOwnedGame{
+	GameName: "",
+	Achievements: make([]Achievement, 0),
+	Error: "",
+	Success: false,
 }
 
 var GetPlayerAchievementsResponse200 = GetPlayerAchievementsResponse{
@@ -79,6 +86,8 @@ var GetPlayerAchievementsResponse200 = GetPlayerAchievementsResponse{
 
 var GetPlayerAchievementsResponse400 = GetPlayerAchievementsResponse{
 	PlayerStats: GetPlayerAchievementsResponseOwnedGame{
+		GameName: "",
+		Achievements: []Achievement{},
 		Error:     "Requested app has no stats",
 		Success: false,
 	},
