@@ -11,6 +11,8 @@ import (
 type GetPlayerAchievementsResponseOwnedGame struct {
 	GameName     string        `json:"gameName"`
 	Achievements []Achievement `json:"achievements"`
+	Error string `json:"error"`
+	Success bool `json:"success"`
 }
 
 type GetPlayerAchievementsResponse struct {
