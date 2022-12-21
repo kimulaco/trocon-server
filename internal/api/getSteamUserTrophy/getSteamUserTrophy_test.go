@@ -79,6 +79,7 @@ func TestGetSteamUserTrophy_AppNotFound(t *testing.T) {
 	testdata.InitGock(testdata.GockConfig{
 		Url:      "http://localhost:9999",
 		Path:     steamworks.GetPlayerAchievementsPath,
+		StatusCode: 400,
 		Response: steamworks.GetPlayerAchievementsResponse{
 			PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
 				GameName:     "",
