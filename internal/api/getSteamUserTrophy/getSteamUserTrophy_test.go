@@ -71,7 +71,7 @@ func TestGetSteamUserTrophy_AppidNotFound(t *testing.T) {
 	}
 }
 
-func TestGetSteamUserTrophy_AppNotFound(t *testing.T) {
+func TestGetSteamUserTrophy_400(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
 	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
@@ -79,7 +79,14 @@ func TestGetSteamUserTrophy_AppNotFound(t *testing.T) {
 	testdata.InitGock(testdata.GockConfig{
 		Url:      "http://localhost:9999",
 		Path:     steamworks.GetPlayerAchievementsPath,
-		Response: GetSteamUserTrophy_AppNotFound,
+		StatusCode: 400,
+		Response: steamworks.GetPlayerAchievementsResponse{
+			PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
+				GameName:     "",
+				Achievements: []steamworks.Achievement{},
+				Success: false,
+			},
+		},
 	})
 
 	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid=1")
@@ -88,9 +95,59 @@ func TestGetSteamUserTrophy_AppNotFound(t *testing.T) {
 
 	if assert.NoError(t, GetSteamUserTrophy(c)) {
 		assert.Equal(t, 200, rec.Code)
+
 		resBody, err := httputil.ReadBody[SuccessResponse](rec.Result())
 		assert.Equal(t, nil, err)
-		assert.Equal(t, SuccessResponse_AppNotFound, resBody)
+
+		expected := SuccessResponse{
+			StatusCode: 200,
+			Trophies: []Trophy{
+				{
+					AppId:        1,
+					Success:      false,
+					GameName:     "",
+					Achievements: []steamworks.Achievement{},
+				},
+			},
+		}
+		assert.Equal(t, expected, resBody)
+	}
+}
+
+func TestGetSteamUserTrophy_403(t *testing.T) {
+	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
+	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
+
+	defer gock.Off()
+	testdata.InitGock(testdata.GockConfig{
+		Url:      "http://localhost:9999",
+		Path:     steamworks.GetPlayerAchievementsPath,
+		StatusCode: 403,
+		Response: testdata.SteamworksResponse403,
+	})
+
+	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid=1")
+	c.SetParamNames("steamid")
+	c.SetParamValues("1")
+
+	if assert.NoError(t, GetSteamUserTrophy(c)) {
+		assert.Equal(t, 200, rec.Code)
+
+		resBody, err := httputil.ReadBody[SuccessResponse](rec.Result())
+		assert.Equal(t, nil, err)
+
+		expected := SuccessResponse{
+			StatusCode: 200,
+			Trophies: []Trophy{
+				{
+					AppId:        1,
+					Success:      false,
+					GameName:     "",
+					Achievements: []steamworks.Achievement{},
+				},
+			},
+		}
+		assert.Equal(t, expected, resBody)
 	}
 }
 
@@ -148,18 +205,6 @@ func TestGetSteamUserTrophy_TwoAppid(t *testing.T) {
 	}
 }
 
-var SuccessResponse_AppNotFound = SuccessResponse{
-	StatusCode: 200,
-	Trophies: []Trophy{
-		{
-			AppId:        1,
-			Success:      false,
-			GameName:     "",
-			Achievements: []steamworks.Achievement{},
-		},
-	},
-}
-
 var SuccessResponse_OneAppid = SuccessResponse{
 	StatusCode: 200,
 	Trophies: []Trophy{
@@ -190,17 +235,11 @@ var SuccessResponse_TwoAppid = SuccessResponse{
 	},
 }
 
-var GetSteamUserTrophy_AppNotFound = steamworks.GetPlayerAchievementsResponse{
-	PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
-		GameName:     "",
-		Achievements: make([]steamworks.Achievement, 0),
-	},
-}
-
 var GetSteamUserTrophy_Appid1 = steamworks.GetPlayerAchievementsResponse{
 	PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
 		GameName:     "Trophy Game 1",
 		Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
+		Success: true,
 	},
 }
 
@@ -208,5 +247,6 @@ var GetSteamUserTrophy_Appid2 = steamworks.GetPlayerAchievementsResponse{
 	PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
 		GameName:     "Trophy Game 2",
 		Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
+		Success: true,
 	},
 }

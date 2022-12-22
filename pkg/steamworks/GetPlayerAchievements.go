@@ -11,6 +11,8 @@ import (
 type GetPlayerAchievementsResponseOwnedGame struct {
 	GameName     string        `json:"gameName"`
 	Achievements []Achievement `json:"achievements"`
+	Error string `json:"error"`
+	Success bool `json:"success"`
 }
 
 type GetPlayerAchievementsResponse struct {
@@ -23,7 +25,12 @@ func (s Steamworks) GetPlayerAchievements(
 	steamid string,
 	appid string,
 ) (GetPlayerAchievementsResponseOwnedGame, error) {
-	var response GetPlayerAchievementsResponseOwnedGame
+	response := GetPlayerAchievementsResponseOwnedGame{
+		GameName: "",
+		Achievements: make([]Achievement, 0),
+		Error: "",
+		Success: false,
+	}
 
 	if steamid == "" {
 		return response, errors.New("steamid is required")
@@ -45,12 +52,11 @@ func (s Steamworks) GetPlayerAchievements(
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode != http.StatusOK {
-		return response, errors.New(res.Status)
-	}
-
 	resBody, err := httputil.ReadBody[GetPlayerAchievementsResponse](res)
 	if err != nil {
+		if res.StatusCode != http.StatusOK {
+			return response, errors.New(res.Status)
+		}
 		return response, err
 	}
 
@@ -60,8 +66,8 @@ func (s Steamworks) GetPlayerAchievements(
 		response.Achievements = make([]Achievement, 0)
 	}
 
-	if response.GameName == "" {
-		return response, errors.New("appid:" + appid + " not found")
+	if !response.Success || res.StatusCode != http.StatusOK {
+		response.Success = false
 	}
 
 	return response, nil

@@ -45,15 +45,14 @@ func GetSteamUserTrophy(c echo.Context) error {
 	for _, appid := range appids {
 		appidInt, _ := strconv.Atoi(appid)
 		game, err := s.GetPlayerAchievements(steamid, appid)
-		success := true
 
 		if err != nil {
 			log.Print("STEAM_USER_TROPHY_INTERNAL_ERROR: appid:" + appid + " " + err.Error())
-			success = false
+			game.Success = false
 		}
 
 		trophies = append(trophies, Trophy{
-			Success:      success,
+			Success:      game.Success,
 			AppId:        appidInt,
 			GameName:     game.GameName,
 			Achievements: game.Achievements,
