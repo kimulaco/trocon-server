@@ -4,7 +4,7 @@
 
 Trocon's backend repository.
 
-Backend repository is [kimulaco/trocon-frontend](https://github.com/kimulaco/trocon-frontend).
+Frontend repository is [kimulaco/trocon-frontend](https://github.com/kimulaco/trocon-frontend).
 
 ## What is Trocon
 
