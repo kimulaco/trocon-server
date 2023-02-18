@@ -1,4 +1,4 @@
-module github.com/kimulaco/trophy-comp-server
+module github.com/kimulaco/trocon-server
 
 go 1.19
 

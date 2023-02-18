@@ -4,10 +4,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	GetStatusAPI "github.com/kimulaco/trophy-comp-server/internal/api/getStatus"
-	GetSteamUserAPI "github.com/kimulaco/trophy-comp-server/internal/api/getSteamUser"
-	GetSteamUserTrophyAPI "github.com/kimulaco/trophy-comp-server/internal/api/getSteamUserTrophy"
-	"github.com/kimulaco/trophy-comp-server/internal/config"
+	GetStatusAPI "github.com/kimulaco/trocon-server/internal/api/getStatus"
+	GetSteamUserAPI "github.com/kimulaco/trocon-server/internal/api/getSteamUser"
+	GetSteamUserTrophyAPI "github.com/kimulaco/trocon-server/internal/api/getSteamUserTrophy"
+	"github.com/kimulaco/trocon-server/internal/config"
 )
 
 func main() {

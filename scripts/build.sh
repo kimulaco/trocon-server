@@ -1,3 +1,3 @@
 # bin/bash
 
-go build main.go -o bin/trophy-comp-server -x
+go build main.go -o bin/trocon-server -x

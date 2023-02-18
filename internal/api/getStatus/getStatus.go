@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/kimulaco/trophy-comp-server/pkg/httputil"
-	"github.com/kimulaco/trophy-comp-server/pkg/steamworks"
+	"github.com/kimulaco/trocon-server/pkg/httputil"
+	"github.com/kimulaco/trocon-server/pkg/steamworks"
 	"github.com/labstack/echo/v4"
 )
 

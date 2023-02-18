@@ -1,7 +1,7 @@
 package testdata
 
 import (
-	"github.com/kimulaco/trophy-comp-server/pkg/steamworks"
+	"github.com/kimulaco/trocon-server/pkg/steamworks"
 )
 
 var TestAchievement1 = steamworks.Achievement{

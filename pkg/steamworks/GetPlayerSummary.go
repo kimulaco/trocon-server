@@ -4,8 +4,8 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/kimulaco/trophy-comp-server/pkg/httputil"
-	"github.com/kimulaco/trophy-comp-server/pkg/urlx"
+	"github.com/kimulaco/trocon-server/pkg/httputil"
+	"github.com/kimulaco/trocon-server/pkg/urlx"
 )
 
 type GetPlayerSummaryResponse struct {

@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/h2non/gock"
-	"github.com/kimulaco/trophy-comp-server/pkg/httputil"
-	"github.com/kimulaco/trophy-comp-server/pkg/steamworks"
-	"github.com/kimulaco/trophy-comp-server/testdata"
+	"github.com/kimulaco/trocon-server/pkg/httputil"
+	"github.com/kimulaco/trocon-server/pkg/steamworks"
+	"github.com/kimulaco/trocon-server/testdata"
 	"github.com/stretchr/testify/assert"
 )
 
