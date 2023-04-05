@@ -13,7 +13,7 @@ type GockConfig struct {
 }
 
 func InitGock(config GockConfig) (*gock.Request, *gock.Response) {
-	req := gock.New(config.Url).Get(config.Path)
+	req := gock.New(config.Url).Get(config.Path).Persist()
 
 	if len(config.Querys) > 0 {
 		for key, value := range config.Querys {
