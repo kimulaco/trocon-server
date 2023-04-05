@@ -49,3 +49,5 @@ jobs:
           output-file-path: benchmark.out
           external-data-json-path: ./cache/benchmark-data.json
           fail-on-alert: true
+          comment-on-alert: true
+          github-token: ${{ secrets.CODECOV_TOKEN }}
