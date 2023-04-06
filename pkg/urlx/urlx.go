@@ -3,6 +3,7 @@ package urlx
 import (
 	"errors"
 	"net/url"
+	"time"
 )
 
 type Urlx struct {
@@ -26,6 +27,8 @@ func (u Urlx) ToString() string {
 }
 
 func (u Urlx) AddQuery(key string, value string) {
+	time.Sleep(time.Second * 1)
+
 	rawQuery := ""
 
 	if u.Url.RawQuery != "" {
