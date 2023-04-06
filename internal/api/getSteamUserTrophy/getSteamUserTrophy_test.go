@@ -231,6 +231,8 @@ func BenchmarkGetSteamUserTrophy(b *testing.B) {
 	c.SetParamNames("steamid")
 	c.SetParamValues("1")
 
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		if err := GetSteamUserTrophy(c); err != nil {
 			b.Fatalf("Error during request: %s", err)
