@@ -3,11 +3,13 @@ package GetSteamUserTrophyAPI
 import (
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/kimulaco/trocon-server/pkg/httputil"
 	"github.com/kimulaco/trocon-server/pkg/steamworks"
+	"github.com/kimulaco/trocon-server/pkg/stringsx"
 	"github.com/labstack/echo/v4"
 )
 
@@ -53,6 +55,8 @@ func GetSteamUserTrophy(c echo.Context) error {
 		trophies = append(trophies, trophy)
 	}
 
+	trophies = sortTrophy(trophies, appids)
+
 	return c.JSON(http.StatusOK, SuccessResponse{
 		StatusCode: http.StatusOK,
 		Trophies:   trophies,
@@ -75,4 +79,15 @@ func getPlayerArchivementWithCh(
 		GameName:     game.GameName,
 		Achievements: game.Achievements,
 	}
+}
+
+func sortTrophy(trophies []Trophy, appids []string) []Trophy {
+	sort.SliceStable(trophies, func(i, j int) bool {
+		trophyAIndex := stringsx.IndexOfString(strconv.Itoa(trophies[i].AppId), appids)
+		trophyBIndex := stringsx.IndexOfString(strconv.Itoa(trophies[j].AppId), appids)
+
+		return trophyAIndex < trophyBIndex
+	})
+
+	return trophies
 }
