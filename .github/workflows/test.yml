@@ -25,3 +25,29 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
+
+  test_benchmark:
+    name: Benchmark Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+      - name: go test
+        run: sh scripts/bench.sh
+      - name: Download previous benchmark data
+        uses: actions/cache@v1
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'go'
+          output-file-path: benchmark.out
+          external-data-json-path: ./cache/benchmark-data.json
+          fail-on-alert: true
+          comment-on-alert: true
+          github-token: ${{ secrets.ACTIONS_TOKEN }}

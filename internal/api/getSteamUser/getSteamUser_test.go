@@ -2,6 +2,8 @@ package GetSteamUserAPI
 
 import (
 	"errors"
+	"net/http"
+	"os"
 	"testing"
 
 	"github.com/h2non/gock"
@@ -108,6 +110,38 @@ func TestGetUser_200(t *testing.T) {
 		assert.Equal(t, 200, rec.Code)
 		assert.Equal(t, nil, err)
 		assert.Equal(t, SuccessResponse_200, resBody)
+	}
+}
+
+func BenchmarkGetUser_200(b *testing.B) {
+	os.Setenv("STEAM_API_KEY", "XXXXXXXX")
+	os.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
+	defer os.Unsetenv("STEAM_API_KEY")
+	defer os.Unsetenv("STEAM_API_BASE_URL")
+
+	defer gock.Off()
+	testdata.InitGock(testdata.GockConfig{
+		Url:      "http://localhost:9999",
+		Path:     steamworks.GetPlayerSummaryPath,
+		Response: GetPlayerSummaryResponse_200,
+	})
+	testdata.InitGock(testdata.GockConfig{
+		Url:      "http://localhost:9999",
+		Path:     steamworks.GetOwnedGamesPath,
+		Response: GetOwnedGamesResponse_200,
+	})
+
+	rec, c := testdata.InitEcho("/api/steam/user/:steamid", "")
+	c.SetParamNames("steamid")
+	c.SetParamValues("1")
+
+	for i := 0; i < b.N; i++ {
+		if err := GetUser(c); err != nil {
+			b.Fatalf("Error during request: %s", err)
+		}
+		if rec.Code != http.StatusOK {
+			b.Fatalf("Unexpected status code: %d", rec.Code)
+		}
 	}
 }
 
