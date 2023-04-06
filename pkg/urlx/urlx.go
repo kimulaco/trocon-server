@@ -27,7 +27,7 @@ func (u Urlx) ToString() string {
 }
 
 func (u Urlx) AddQuery(key string, value string) {
-	time.Sleep(time.Second * 1)
+	time.Sleep(time.Second * 2)
 
 	rawQuery := ""
 
