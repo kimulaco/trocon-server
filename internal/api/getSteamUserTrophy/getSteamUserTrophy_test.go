@@ -2,6 +2,9 @@ package GetSteamUserTrophyAPI
 
 import (
 	"errors"
+	"net/http"
+	"os"
+	"strconv"
 	"testing"
 
 	"github.com/h2non/gock"
@@ -205,6 +208,41 @@ func TestGetSteamUserTrophy_TwoAppid(t *testing.T) {
 	}
 }
 
+func BenchmarkGetSteamUserTrophy(b *testing.B) {
+	os.Setenv("STEAM_API_KEY", "XXXXXXXX")
+	os.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
+	defer os.Unsetenv("STEAM_API_KEY")
+	defer os.Unsetenv("STEAM_API_BASE_URL")
+
+	defer gock.Off()
+	appidParams := ""
+	for i := 1; i <= 21; i++ {
+		appidParams += strconv.Itoa(i) + ","
+		testdata.InitGock(testdata.GockConfig{
+			Url:      "http://localhost:9999",
+			Path:     steamworks.GetPlayerAchievementsPath,
+			Querys:   map[string]string{"appid": strconv.Itoa(i)},
+			Response: createDummyTrophy(i),
+		})
+	}
+
+	appidParams = appidParams[0 : len(appidParams) - 1]
+	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid=" + appidParams)
+	c.SetParamNames("steamid")
+	c.SetParamValues("1")
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		if err := GetSteamUserTrophy(c); err != nil {
+			b.Fatalf("Error during request: %s", err)
+		}
+		if rec.Code != http.StatusOK {
+			b.Fatalf("Unexpected status code: %d", rec.Code)
+		}
+	}
+}
+
 var SuccessResponse_OneAppid = SuccessResponse{
 	StatusCode: 200,
 	Trophies: []Trophy{
@@ -235,18 +273,16 @@ var SuccessResponse_TwoAppid = SuccessResponse{
 	},
 }
 
-var GetSteamUserTrophy_Appid1 = steamworks.GetPlayerAchievementsResponse{
-	PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
-		GameName:     "Trophy Game 1",
-		Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
-		Success: true,
-	},
-}
+var GetSteamUserTrophy_Appid1 = createDummyTrophy(1)
 
-var GetSteamUserTrophy_Appid2 = steamworks.GetPlayerAchievementsResponse{
-	PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
-		GameName:     "Trophy Game 2",
-		Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
-		Success: true,
-	},
+var GetSteamUserTrophy_Appid2 = createDummyTrophy(2)
+
+func createDummyTrophy(appid int) steamworks.GetPlayerAchievementsResponse {
+	return steamworks.GetPlayerAchievementsResponse{
+		PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
+			GameName:     "Trophy Game " + strconv.Itoa(appid),
+			Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
+			Success: true,
+		},
+	}
 }

@@ -36,31 +36,43 @@ func GetSteamUserTrophy(c echo.Context) error {
 
 	appid := c.QueryParam("appid")
 	appids := strings.Split(appid, ",")
-	if appid == "" || len(appids) <= 0 {
+	appidLen := len(appids)
+	if appid == "" || appidLen <= 0 {
 		return c.JSON(httputil.NewError400("STEAM_USER_TROPHY_APPID_NOT_FOUND", "appid not found"))
 	}
 
-	var trophies []Trophy
+	trophiesChan := make(chan Trophy, appidLen)
+	trophies := make([]Trophy, 0, appidLen)
 
-	for _, appid := range appids {
-		appidInt, _ := strconv.Atoi(appid)
-		game, err := s.GetPlayerAchievements(steamid, appid)
+	for i := 0; i < appidLen; i++ {
+		go getPlayerArchivementWithCh(s, steamid, appids[i], trophiesChan)
+	}
 
-		if err != nil {
-			log.Print("STEAM_USER_TROPHY_INTERNAL_ERROR: appid:" + appid + " " + err.Error())
-			game.Success = false
-		}
-
-		trophies = append(trophies, Trophy{
-			Success:      game.Success,
-			AppId:        appidInt,
-			GameName:     game.GameName,
-			Achievements: game.Achievements,
-		})
+	for i := 0; i < appidLen; i++ {
+		trophy := <-trophiesChan
+		trophies = append(trophies, trophy)
 	}
 
 	return c.JSON(http.StatusOK, SuccessResponse{
 		StatusCode: http.StatusOK,
 		Trophies:   trophies,
 	})
+}
+
+func getPlayerArchivementWithCh(
+	s steamworks.Steamworks, steamid string, appid string, ch chan Trophy,
+) {
+	appidInt, _ := strconv.Atoi(appid)
+	game, err := s.GetPlayerAchievements(steamid, appid)
+	if err != nil {
+		log.Print("STEAM_USER_TROPHY_INTERNAL_ERROR: appid:" + appid + " " + err.Error())
+		game.Success = false
+	}
+
+	ch <- Trophy{
+		Success:      game.Success,
+		AppId:        appidInt,
+		GameName:     game.GameName,
+		Achievements: game.Achievements,
+	}
 }
