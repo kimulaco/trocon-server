@@ -163,7 +163,7 @@ func TestGetSteamUserTrophy_OneAppid(t *testing.T) {
 		Url:      "http://localhost:9999",
 		Path:     steamworks.GetPlayerAchievementsPath,
 		Querys:   map[string]string{"appid": "1"},
-		Response: GetSteamUserTrophy_Appid1,
+		Response: createPlayerAchievementsResponse(1),
 	})
 
 	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid=1")
@@ -174,7 +174,12 @@ func TestGetSteamUserTrophy_OneAppid(t *testing.T) {
 		assert.Equal(t, 200, rec.Code)
 		resBody, err := httputil.ReadBody[SuccessResponse](rec.Result())
 		assert.Equal(t, nil, err)
-		assert.Equal(t, SuccessResponse_OneAppid, resBody)
+		assert.Equal(t, SuccessResponse{
+			StatusCode: 200,
+			Trophies: []Trophy{
+				createDummyTrophy(1),
+			},
+		}, resBody)
 	}
 }
 
@@ -183,18 +188,14 @@ func TestGetSteamUserTrophy_TwoAppid(t *testing.T) {
 	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
 	defer gock.Off()
-	testdata.InitGock(testdata.GockConfig{
-		Url:      "http://localhost:9999",
-		Path:     steamworks.GetPlayerAchievementsPath,
-		Querys:   map[string]string{"appid": "1"},
-		Response: GetSteamUserTrophy_Appid1,
-	})
-	testdata.InitGock(testdata.GockConfig{
-		Url:      "http://localhost:9999",
-		Path:     steamworks.GetPlayerAchievementsPath,
-		Querys:   map[string]string{"appid": "2"},
-		Response: GetSteamUserTrophy_Appid2,
-	})
+	for i := 1; i <= 2; i++ {
+		testdata.InitGock(testdata.GockConfig{
+			Url:      "http://localhost:9999",
+			Path:     steamworks.GetPlayerAchievementsPath,
+			Querys:   map[string]string{"appid": strconv.Itoa(i)},
+			Response: createPlayerAchievementsResponse(i),
+		})
+	}
 
 	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid=1,2")
 	c.SetParamNames("steamid")
@@ -204,7 +205,13 @@ func TestGetSteamUserTrophy_TwoAppid(t *testing.T) {
 		assert.Equal(t, 200, rec.Code)
 		resBody, err := httputil.ReadBody[SuccessResponse](rec.Result())
 		assert.Equal(t, nil, err)
-		assert.Equal(t, SuccessResponse_TwoAppid, resBody)
+		assert.Equal(t, SuccessResponse{
+			StatusCode: 200,
+			Trophies: []Trophy{
+				createDummyTrophy(1),
+				createDummyTrophy(2),
+			},
+		}, resBody)
 	}
 }
 
@@ -222,7 +229,7 @@ func BenchmarkGetSteamUserTrophy(b *testing.B) {
 			Url:      "http://localhost:9999",
 			Path:     steamworks.GetPlayerAchievementsPath,
 			Querys:   map[string]string{"appid": strconv.Itoa(i)},
-			Response: createDummyTrophy(i),
+			Response: createPlayerAchievementsResponse(i),
 		})
 	}
 
@@ -243,41 +250,16 @@ func BenchmarkGetSteamUserTrophy(b *testing.B) {
 	}
 }
 
-var SuccessResponse_OneAppid = SuccessResponse{
-	StatusCode: 200,
-	Trophies: []Trophy{
-		{
-			AppId:        1,
-			Success:      true,
-			GameName:     "Trophy Game 1",
-			Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
-		},
-	},
+func createDummyTrophy(appid int) Trophy {
+	return Trophy{
+		AppId:        appid,
+		Success:      true,
+		GameName:     "Trophy Game " + strconv.Itoa(appid),
+		Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
+	}
 }
 
-var SuccessResponse_TwoAppid = SuccessResponse{
-	StatusCode: 200,
-	Trophies: []Trophy{
-		{
-			AppId:        1,
-			Success:      true,
-			GameName:     "Trophy Game 1",
-			Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
-		},
-		{
-			AppId:        2,
-			Success:      true,
-			GameName:     "Trophy Game 2",
-			Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
-		},
-	},
-}
-
-var GetSteamUserTrophy_Appid1 = createDummyTrophy(1)
-
-var GetSteamUserTrophy_Appid2 = createDummyTrophy(2)
-
-func createDummyTrophy(appid int) steamworks.GetPlayerAchievementsResponse {
+func createPlayerAchievementsResponse(appid int) steamworks.GetPlayerAchievementsResponse {
 	return steamworks.GetPlayerAchievementsResponse{
 		PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
 			GameName:     "Trophy Game " + strconv.Itoa(appid),
