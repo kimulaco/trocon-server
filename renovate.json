@@ -1,0 +1,26 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "group:allNonMajor"
+  ],
+  "constraints": {
+    "go": "1.19"
+  },
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
+  "dependencyDashboard": true,
+  "vulnerabilityAlerts": {
+    "labels": ["security"]
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    }
+  ],
+  "schedule": [
+    "before 6am on Saturday"
+  ]
+}
