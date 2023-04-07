@@ -14,8 +14,8 @@ jobs:
           fetch-depth: 2
       - uses: at-wat/go-sum-fix-action@v0
         with:
-          git_user: @@MAINTAINER_NAME@@
-          git_email: @@MAINTAINER_EMAIL_ADDRESS@@
+          git_user: ${{ secrets.RENOVATE_MAINTAINER_NAME }}
+          git_email: ${{ secrets.RENOVATE_MAINTAINER_EMAIL_ADDRESS }}
           github_token: ${{ secrets.ACTIONS_TOKEN }}
           commit_style: squash
           push: force
