@@ -1,6 +1,6 @@
 module github.com/kimulaco/trocon-server
 
-go 1.19
+go 1.20
 
 require (
 	github.com/h2non/gock v1.2.0
