@@ -289,5 +289,6 @@ var playerAchievementsResponse400 = steamworks.GetPlayerAchievementsResponse{
 		GameName:     "Trophy Game 400",
 		Achievements: make([]steamworks.Achievement, 0, 0),
 		Success: false,
+		Error: "Requested app has no stats",
 	},
 }
