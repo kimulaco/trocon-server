@@ -197,7 +197,14 @@ func TestGetSteamUserTrophy_TwoAppid(t *testing.T) {
 		})
 	}
 
-	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid=1,2")
+	testdata.InitGock(testdata.GockConfig{
+		Url:      "http://localhost:9999",
+		Path:     steamworks.GetPlayerAchievementsPath,
+		Querys:   map[string]string{"appid": "400"},
+		Response: playerAchievementsResponse400,
+	})
+
+	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid=1,2,400")
 	c.SetParamNames("steamid")
 	c.SetParamValues("1")
 
@@ -210,6 +217,7 @@ func TestGetSteamUserTrophy_TwoAppid(t *testing.T) {
 			Trophies: []Trophy{
 				createDummyTrophy(1),
 				createDummyTrophy(2),
+				dummyTrophy400,
 			},
 		}, resBody)
 	}
@@ -267,4 +275,19 @@ func createPlayerAchievementsResponse(appid int) steamworks.GetPlayerAchievement
 			Success: true,
 		},
 	}
+}
+
+var dummyTrophy400 = Trophy{
+	AppId:        400,
+	Success:      true,
+	GameName:     "Trophy Game 400",
+	Achievements: make([]steamworks.Achievement, 0, 0),
+}
+
+var playerAchievementsResponse400 = steamworks.GetPlayerAchievementsResponse{
+	PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
+		GameName:     "Trophy Game 400",
+		Achievements: make([]steamworks.Achievement, 0, 0),
+		Success: false,
+	},
 }
