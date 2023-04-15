@@ -74,7 +74,7 @@ func getPlayerArchivementWithCh(
 	}
 
 	ch <- Trophy{
-		Success:      game.Success,
+		Success:      GetSuccess(game),
 		AppId:        appidInt,
 		GameName:     game.GameName,
 		Achievements: game.Achievements,
