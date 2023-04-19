@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/h2non/gock"
+	"github.com/kimulaco/trocon-server/interface/steamworks"
 	"github.com/kimulaco/trocon-server/pkg/httputil"
-	"github.com/kimulaco/trocon-server/pkg/steamworks"
 	"github.com/kimulaco/trocon-server/testdata"
 	"github.com/stretchr/testify/assert"
 )
@@ -263,7 +263,7 @@ func createDummyTrophy(appid int) Trophy {
 		AppId:        appid,
 		Success:      true,
 		GameName:     "Trophy Game " + strconv.Itoa(appid),
-		Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
+		Achievements: []steamworks.Achievement{steamworks.TestAchievement1, steamworks.TestAchievement2},
 	}
 }
 
@@ -271,7 +271,7 @@ func createPlayerAchievementsResponse(appid int) steamworks.GetPlayerAchievement
 	return steamworks.GetPlayerAchievementsResponse{
 		PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
 			GameName:     "Trophy Game " + strconv.Itoa(appid),
-			Achievements: []steamworks.Achievement{testdata.TestAchievement1, testdata.TestAchievement2},
+			Achievements: []steamworks.Achievement{steamworks.TestAchievement1, steamworks.TestAchievement2},
 			Success: true,
 		},
 	}

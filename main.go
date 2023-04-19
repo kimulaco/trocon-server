@@ -4,17 +4,17 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	GetStatusAPI "github.com/kimulaco/trocon-server/internal/api/getStatus"
-	GetSteamUserAPI "github.com/kimulaco/trocon-server/internal/api/getSteamUser"
-	GetSteamUserTrophyAPI "github.com/kimulaco/trocon-server/internal/api/getSteamUserTrophy"
-	"github.com/kimulaco/trocon-server/internal/config"
+	APIConfig "github.com/kimulaco/trocon-server/usecase/config"
+	GetStatusAPI "github.com/kimulaco/trocon-server/usecase/handler/getStatus"
+	GetSteamUserAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUser"
+	GetSteamUserTrophyAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUserTrophy"
 )
 
 func main() {
 	e := echo.New()
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: config.GetCORSAllowOrigins(),
+		AllowOrigins: APIConfig.GetCORSAllowOrigins(),
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
@@ -27,5 +27,5 @@ func main() {
 	e.GET("/api/steam/user/:steamid", GetSteamUserAPI.GetUser)
 	e.GET("/api/steam/user/:steamid/trophy", GetSteamUserTrophyAPI.GetSteamUserTrophy)
 
-	e.Logger.Fatal(e.Start(config.GetListenPort("9000")))
+	e.Logger.Fatal(e.Start(APIConfig.GetListenPort("9000")))
 }

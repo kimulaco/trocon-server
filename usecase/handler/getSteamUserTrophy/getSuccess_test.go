@@ -3,7 +3,7 @@ package GetSteamUserTrophyAPI
 import (
 	"testing"
 
-	"github.com/kimulaco/trocon-server/pkg/steamworks"
+	"github.com/kimulaco/trocon-server/interface/steamworks"
 	"github.com/stretchr/testify/assert"
 )
 
