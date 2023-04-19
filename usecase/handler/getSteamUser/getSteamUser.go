@@ -4,15 +4,16 @@ import (
 	"log"
 	"net/http"
 
+	Game "github.com/kimulaco/trocon-server/domain/game"
+	"github.com/kimulaco/trocon-server/interface/steamworks"
 	"github.com/kimulaco/trocon-server/pkg/httputil"
-	"github.com/kimulaco/trocon-server/pkg/steamworks"
 	"github.com/labstack/echo/v4"
 )
 
 type GetUserResponse struct {
 	StatusCode int               `json:"statusCode"`
 	User       steamworks.Player `json:"user"`
-	Games      []steamworks.Game `json:"games"`
+	Games      []Game.Game `json:"games"`
 }
 
 func GetUser(c echo.Context) error {

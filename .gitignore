@@ -6,7 +6,7 @@
 bin
 
 # coverage
-coverage.out
+coverage.*
 
 # benchmark
-benchmark.out
+benchmark.*

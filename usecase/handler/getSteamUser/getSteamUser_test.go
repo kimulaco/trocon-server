@@ -7,8 +7,9 @@ import (
 	"testing"
 
 	"github.com/h2non/gock"
+	Game "github.com/kimulaco/trocon-server/domain/game"
+	"github.com/kimulaco/trocon-server/interface/steamworks"
 	"github.com/kimulaco/trocon-server/pkg/httputil"
-	"github.com/kimulaco/trocon-server/pkg/steamworks"
 	"github.com/kimulaco/trocon-server/testdata"
 	"github.com/stretchr/testify/assert"
 )
@@ -184,5 +185,5 @@ var GetOwnedGamesResponse_Empty = steamworks.GetOwnedGamesResponse{
 var SuccessResponse_200 = GetUserResponse{
 	StatusCode: 200,
 	User:       steamworks.TestUser,
-	Games:      []steamworks.Game{steamworks.TestGame1.ToGame(), steamworks.TestGame2.ToGame()},
+	Games:      []Game.Game{steamworks.TestGame1.ToGame(), steamworks.TestGame2.ToGame()},
 }

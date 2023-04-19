@@ -1,10 +1,6 @@
-package testdata
+package steamworks
 
-import (
-	"github.com/kimulaco/trocon-server/pkg/steamworks"
-)
-
-var TestAchievement1 = steamworks.Achievement{
+var TestAchievement1 = Achievement{
 	ApiName:     "api-1",
 	Name:        "Trophy 1",
 	Description: "",
@@ -12,7 +8,7 @@ var TestAchievement1 = steamworks.Achievement{
 	UnlockTime:  1640962800,
 }
 
-var TestAchievement2 = steamworks.Achievement{
+var TestAchievement2 = Achievement{
 	ApiName:     "api-2",
 	Name:        "Trophy 2",
 	Description: "",

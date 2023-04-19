@@ -2,18 +2,9 @@ package steamworks
 
 import (
 	"strconv"
-)
 
-type Game struct {
-	AppId                    int    `json:"appId"`
-	Name                     string `json:"name"`
-	IconImgUrl               string `json:"iconImgUrl"`
-	HeaderImgUrl             string `json:"headerImgUrl"`
-	StoreUrl                 string `json:"storeUrl"`
-	HasCommunityVisibleStats bool   `json:"hasCommunityVisibleStats"`
-	Playtime                 int    `json:"playtime"`
-	RtimeLastPlayed          int    `json:"rtimeLastPlayed"`
-}
+	Game "github.com/kimulaco/trocon-server/domain/game"
+)
 
 type OwnedGame struct {
 	AppId                    int    `json:"appId"`
@@ -27,10 +18,10 @@ type OwnedGame struct {
 	RtimeLastPlayed          int    `json:"rtime_last_played"`
 }
 
-func (o OwnedGame) ToGame() Game {
+func (o OwnedGame) ToGame() Game.Game {
 	appIdStr := strconv.Itoa(o.AppId)
 
-	return Game{
+	return Game.Game{
 		AppId:                    o.AppId,
 		Name:                     o.Name,
 		IconImgUrl:               createIconImgUrl(appIdStr, o.ImgIconUrl),
@@ -54,8 +45,8 @@ func createStoreUrl(appId string) string {
 	return "https://store.steampowered.com/app/" + appId
 }
 
-func MapOwnedGamesToGames(ownedGames []OwnedGame) []Game {
-	games := make([]Game, len(ownedGames))
+func MapOwnedGamesToGames(ownedGames []OwnedGame) []Game.Game {
+	games := make([]Game.Game, len(ownedGames))
 
 	for i, ownedGame := range ownedGames {
 		games[i] = ownedGame.ToGame()

@@ -3,13 +3,14 @@ package steamworks
 import (
 	"testing"
 
+	Game "github.com/kimulaco/trocon-server/domain/game"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestOwnedGameToGame(t *testing.T) {
 	g := TestGame1
 
-	assert.Equal(t, g.ToGame(), Game{
+	assert.Equal(t, g.ToGame(), Game.Game{
 		AppId:                    1,
 		Name:                     "Trophy Comp Game 1",
 		IconImgUrl:               "https://media.steampowered.com/steamcommunity/public/images/apps/1/icon_hash.jpg",
@@ -24,7 +25,7 @@ func TestOwnedGameToGame(t *testing.T) {
 func TestMapOwnedGamesToGames(t *testing.T) {
 	games := MapOwnedGamesToGames([]OwnedGame{TestGame1, TestGame2})
 
-	assert.Equal(t, games, []Game{
+	assert.Equal(t, games, []Game.Game{
 		{
 			AppId:                    1,
 			Name:                     "Trophy Comp Game 1",
