@@ -6,11 +6,11 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
+	"github.com/kimulaco/trocon-server/interface/sentry"
 	APIConfig "github.com/kimulaco/trocon-server/usecase/config"
 	GetStatusAPI "github.com/kimulaco/trocon-server/usecase/handler/getStatus"
 	GetSteamUserAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUser"
 	GetSteamUserTrophyAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUserTrophy"
-	"github.com/kimulaco/trocon-server/usecase/tracker/sentry"
 )
 
 func main() {
@@ -25,6 +25,8 @@ func main() {
 
 	e := echo.New()
 
+	e.Use(sentry.NewMiddleware())
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: APIConfig.GetCORSAllowOrigins(),
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
@@ -33,8 +35,6 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
-
-	e.Use(sentry.NewMiddleware())
 
 	e.GET("/api/status", GetStatusAPI.GetStatus)
 

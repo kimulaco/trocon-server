@@ -48,12 +48,10 @@ func SetTag(c echo.Context, tag string, v string) {
 	}
 }
 
-func Message(s string) {
-	sentry.CaptureMessage(s)
-}
-
-func Exception(err error) {
-	sentry.CaptureException(err)
+func AddBreadcrumb(s string) {
+	sentry.AddBreadcrumb(&sentry.Breadcrumb{
+		Message: s,
+	})
 }
 
 func Recover() {

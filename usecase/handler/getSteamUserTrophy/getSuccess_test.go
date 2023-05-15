@@ -15,15 +15,15 @@ func TestGetSuccess(t *testing.T) {
 
 var SuccessGame = steamworks.GetPlayerAchievementsResponseOwnedGame{
 	Success: true,
-	Error: "",
+	Error:   "",
 }
 
 var NoStatsGame = steamworks.GetPlayerAchievementsResponseOwnedGame{
 	Success: false,
-	Error: "Requested app has no stats",
+	Error:   "Requested app has no stats",
 }
 
 var NonSuccessGame = steamworks.GetPlayerAchievementsResponseOwnedGame{
 	Success: false,
-	Error: "",
+	Error:   "",
 }

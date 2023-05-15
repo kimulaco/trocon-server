@@ -5,8 +5,8 @@ import (
 	"github.com/kimulaco/trocon-server/pkg/stringsx"
 )
 
-func GetSuccess (game steamworks.GetPlayerAchievementsResponseOwnedGame) bool {
-	if (!game.Success && stringsx.Contains(game.Error ,NON_ERROR_MESSAGES)) {
+func GetSuccess(game steamworks.GetPlayerAchievementsResponseOwnedGame) bool {
+	if !game.Success && stringsx.Contains(game.Error, NON_ERROR_MESSAGES) {
 		return true
 	}
 	return game.Success
