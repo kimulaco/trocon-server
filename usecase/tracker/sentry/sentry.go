@@ -3,6 +3,7 @@ package sentry
 import (
 	"errors"
 	"os"
+	"time"
 
 	"github.com/getsentry/sentry-go"
 	sentryecho "github.com/getsentry/sentry-go/echo"
@@ -16,9 +17,16 @@ func Init() error {
 		return errors.New("SENTRY_DSN undefined")
 	}
 
+	env := os.Getenv("BUILD_MODE")
+
+	if env == "" {
+		return errors.New("BUILD_MODE undefined")
+	}
+
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn:              dsn,
 		TracesSampleRate: 1.0,
+		Environment:      env,
 	})
 
 	if err != nil {
@@ -28,7 +36,7 @@ func Init() error {
 	return nil
 }
 
-func Middleware() echo.MiddlewareFunc {
+func NewMiddleware() echo.MiddlewareFunc {
 	return sentryecho.New(sentryecho.Options{
 		Repanic: true,
 	})
@@ -38,4 +46,17 @@ func SetTag(c echo.Context, tag string, v string) {
 	if hub := sentryecho.GetHubFromContext(c); hub != nil {
 		hub.Scope().SetTag(tag, v)
 	}
+}
+
+func Message(s string) {
+	sentry.CaptureMessage(s)
+}
+
+func Exception(err error) {
+	sentry.CaptureException(err)
+}
+
+func Recover() {
+	sentry.Recover()
+	sentry.Flush(2 * time.Second)
 }

@@ -10,7 +10,7 @@ import (
 	GetStatusAPI "github.com/kimulaco/trocon-server/usecase/handler/getStatus"
 	GetSteamUserAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUser"
 	GetSteamUserTrophyAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUserTrophy"
-	"github.com/kimulaco/trocon-server/usecase/sentry"
+	"github.com/kimulaco/trocon-server/usecase/tracker/sentry"
 )
 
 func main() {
@@ -18,6 +18,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("sentry.Init: %s", err)
 	}
+
+	defer func() {
+		sentry.Recover()
+	}()
 
 	e := echo.New()
 
@@ -30,7 +34,7 @@ func main() {
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
 
-	e.Use(sentry.Middleware())
+	e.Use(sentry.NewMiddleware())
 
 	e.GET("/api/status", GetStatusAPI.GetStatus)
 
