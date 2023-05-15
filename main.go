@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
@@ -8,9 +10,15 @@ import (
 	GetStatusAPI "github.com/kimulaco/trocon-server/usecase/handler/getStatus"
 	GetSteamUserAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUser"
 	GetSteamUserTrophyAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUserTrophy"
+	"github.com/kimulaco/trocon-server/usecase/sentry"
 )
 
 func main() {
+	err := sentry.Init()
+	if err != nil {
+		log.Fatalf("sentry.Init: %s", err)
+	}
+
 	e := echo.New()
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -21,6 +29,8 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
+
+	e.Use(sentry.Middleware())
 
 	e.GET("/api/status", GetStatusAPI.GetStatus)
 
