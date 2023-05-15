@@ -44,7 +44,7 @@ func TestGetPlayerSummaryError(t *testing.T) {
 
 	r.Get(GetPlayerSummaryPath).Reply(403).JSON(Response403)
 	player2, err2 := s.GetPlayerSummary("1")
-	assert.Equal(t, player2, Player{})
+	assert.Equal(t, player2, Player{SteamID: "1"})
 	assert.Equal(t, err2, errors.New("403 Forbidden"))
 }
 

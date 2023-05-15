@@ -17,7 +17,9 @@ type GetPlayerSummaryResponse struct {
 const GetPlayerSummaryPath = "/ISteamUser/GetPlayerSummaries/v2/"
 
 func (s Steamworks) GetPlayerSummary(steamid string) (Player, error) {
-	var player Player
+	player := Player{
+		SteamID: steamid,
+	}
 
 	if steamid == "" {
 		return player, errors.New("steamid is required")
