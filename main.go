@@ -1,9 +1,12 @@
 package main
 
 import (
+	"log"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
+	"github.com/kimulaco/trocon-server/interface/sentry"
 	APIConfig "github.com/kimulaco/trocon-server/usecase/config"
 	GetStatusAPI "github.com/kimulaco/trocon-server/usecase/handler/getStatus"
 	GetSteamUserAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUser"
@@ -11,7 +14,18 @@ import (
 )
 
 func main() {
+	err := sentry.Init()
+	if err != nil {
+		log.Fatalf("sentry.Init: %s", err)
+	}
+
+	defer func() {
+		sentry.Recover()
+	}()
+
 	e := echo.New()
+
+	e.Use(sentry.NewMiddleware())
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: APIConfig.GetCORSAllowOrigins(),

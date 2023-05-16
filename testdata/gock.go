@@ -5,11 +5,11 @@ import (
 )
 
 type GockConfig struct {
-	Url      string
-	Path     string
-	Querys   map[string]string
+	Url        string
+	Path       string
+	Querys     map[string]string
 	StatusCode int
-	Response interface{}
+	Response   interface{}
 }
 
 func InitGock(config GockConfig) (*gock.Request, *gock.Response) {

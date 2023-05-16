@@ -80,14 +80,14 @@ func TestGetSteamUserTrophy_400(t *testing.T) {
 
 	defer gock.Off()
 	testdata.InitGock(testdata.GockConfig{
-		Url:      "http://localhost:9999",
-		Path:     steamworks.GetPlayerAchievementsPath,
+		Url:        "http://localhost:9999",
+		Path:       steamworks.GetPlayerAchievementsPath,
 		StatusCode: 400,
 		Response: steamworks.GetPlayerAchievementsResponse{
 			PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
 				GameName:     "",
 				Achievements: []steamworks.Achievement{},
-				Success: false,
+				Success:      false,
 			},
 		},
 	})
@@ -123,10 +123,10 @@ func TestGetSteamUserTrophy_403(t *testing.T) {
 
 	defer gock.Off()
 	testdata.InitGock(testdata.GockConfig{
-		Url:      "http://localhost:9999",
-		Path:     steamworks.GetPlayerAchievementsPath,
+		Url:        "http://localhost:9999",
+		Path:       steamworks.GetPlayerAchievementsPath,
 		StatusCode: 403,
-		Response: testdata.SteamworksResponse403,
+		Response:   testdata.SteamworksResponse403,
 	})
 
 	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid=1")
@@ -241,8 +241,8 @@ func BenchmarkGetSteamUserTrophy(b *testing.B) {
 		})
 	}
 
-	appidParams = appidParams[0 : len(appidParams) - 1]
-	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid=" + appidParams)
+	appidParams = appidParams[0 : len(appidParams)-1]
+	rec, c := testdata.InitEcho("/api/steam/user/:steamid/trophy", "appid="+appidParams)
 	c.SetParamNames("steamid")
 	c.SetParamValues("1")
 
@@ -272,7 +272,7 @@ func createPlayerAchievementsResponse(appid int) steamworks.GetPlayerAchievement
 		PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
 			GameName:     "Trophy Game " + strconv.Itoa(appid),
 			Achievements: []steamworks.Achievement{steamworks.TestAchievement1, steamworks.TestAchievement2},
-			Success: true,
+			Success:      true,
 		},
 	}
 }
@@ -288,7 +288,7 @@ var playerAchievementsResponse400 = steamworks.GetPlayerAchievementsResponse{
 	PlayerStats: steamworks.GetPlayerAchievementsResponseOwnedGame{
 		GameName:     "Trophy Game 400",
 		Achievements: make([]steamworks.Achievement, 0, 0),
-		Success: false,
-		Error: "Requested app has no stats",
+		Success:      false,
+		Error:        "Requested app has no stats",
 	},
 }

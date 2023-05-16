@@ -86,6 +86,72 @@ func TestGetUser_PlayerNotFound(t *testing.T) {
 	}
 }
 
+func TestGetUser_FailGetPlayer(t *testing.T) {
+	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
+	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
+
+	defer gock.Off()
+	testdata.InitGock(testdata.GockConfig{
+		Url:        "http://localhost:9999",
+		Path:       steamworks.GetPlayerSummaryPath,
+		StatusCode: 500,
+		Response:   GetPlayerSummaryResponse_Empty,
+	})
+	testdata.InitGock(testdata.GockConfig{
+		Url:      "http://localhost:9999",
+		Path:     steamworks.GetOwnedGamesPath,
+		Response: GetOwnedGamesResponse_200,
+	})
+
+	rec, c := testdata.InitEcho("/api/steam/user/:steamid", "")
+	c.SetParamNames("steamid")
+	c.SetParamValues("1")
+
+	if assert.NoError(t, GetUser(c)) {
+		resBody, err := httputil.ReadBody[httputil.Error](rec.Result())
+		assert.Equal(t, 500, rec.Code)
+		assert.Equal(t, nil, err)
+		assert.Equal(t, httputil.NewError(
+			500,
+			"STEAM_USER_INTERNAL_ERROR",
+			errors.New("internal server error"),
+		), resBody)
+	}
+}
+
+func TestGetUser_FailGetGames(t *testing.T) {
+	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
+	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
+
+	defer gock.Off()
+	testdata.InitGock(testdata.GockConfig{
+		Url:      "http://localhost:9999",
+		Path:     steamworks.GetPlayerSummaryPath,
+		Response: GetPlayerSummaryResponse_200,
+	})
+	testdata.InitGock(testdata.GockConfig{
+		Url:        "http://localhost:9999",
+		Path:       steamworks.GetOwnedGamesPath,
+		StatusCode: 500,
+		Response:   GetOwnedGamesResponse_Empty,
+	})
+
+	rec, c := testdata.InitEcho("/api/steam/user/:steamid", "")
+	c.SetParamNames("steamid")
+	c.SetParamValues("1")
+
+	if assert.NoError(t, GetUser(c)) {
+		resBody, err := httputil.ReadBody[httputil.Error](rec.Result())
+		assert.Equal(t, 500, rec.Code)
+		assert.Equal(t, nil, err)
+		assert.Equal(t, httputil.NewError(
+			500,
+			"STEAM_OWNED_GAME_INTERNAL_ERROR",
+			errors.New("internal server error"),
+		), resBody)
+	}
+}
+
 func TestGetUser_200(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
 	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")

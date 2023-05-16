@@ -1,12 +1,14 @@
 package GetSteamUserTrophyAPI
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"sort"
 	"strconv"
 	"strings"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/kimulaco/trocon-server/interface/steamworks"
 	"github.com/kimulaco/trocon-server/pkg/httputil"
 	"github.com/kimulaco/trocon-server/pkg/stringsx"
@@ -28,6 +30,7 @@ type SuccessResponse struct {
 func GetSteamUserTrophy(c echo.Context) error {
 	s := steamworks.NewSteamworks()
 	if s.InvalidEnv() {
+		errorLog("STEAM_USER_TROPHY_ENVIROMENT_ERROR: undefined steam API key")
 		return c.JSON(httputil.NewError500("STEAM_USER_TROPHY_ENVIROMENT_ERROR", ""))
 	}
 
@@ -61,6 +64,11 @@ func GetSteamUserTrophy(c echo.Context) error {
 		StatusCode: http.StatusOK,
 		Trophies:   trophies,
 	})
+}
+
+func errorLog(s string) {
+	log.Print(s)
+	sentry.CaptureException(errors.New(s))
 }
 
 func getPlayerArchivementWithCh(
