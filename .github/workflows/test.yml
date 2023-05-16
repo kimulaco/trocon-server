@@ -25,6 +25,12 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
+      - name: Upload coverage to Code Climate
+        uses: paambaati/codeclimate-action@v4.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageLocations: 'coverage.out'
 
   test_benchmark:
     name: Benchmark Test
