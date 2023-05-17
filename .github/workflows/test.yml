@@ -31,6 +31,7 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageLocations: 'coverage.out'
+          debug: true
 
   test_benchmark:
     name: Benchmark Test
