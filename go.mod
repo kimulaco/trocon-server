@@ -3,6 +3,7 @@ module github.com/kimulaco/trocon-server
 go 1.20
 
 require (
+	github.com/getsentry/sentry-go v0.21.0
 	github.com/h2non/gock v1.2.0
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/stretchr/testify v1.8.2
@@ -10,7 +11,6 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/getsentry/sentry-go v0.21.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
