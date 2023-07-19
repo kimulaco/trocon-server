@@ -45,9 +45,17 @@ func TestResolveVanityURLError_NoMatch(t *testing.T) {
 		Response:   ResolveVanityURLResponse200_43,
 	})
 
-	steamid1, err1 := s.ResolveVanityURL("undefined-user-name")
-	assert.Equal(t, steamid1, "")
-	assert.Equal(t, err1, errors.New("success:42 No match"))
+	steamid, err := s.ResolveVanityURL("undefined-user-name")
+	assert.Equal(t, steamid, "")
+	assert.Equal(t, err, errors.New("success:42 No match"))
+}
+
+func TestResolveVanityURLError_RequiredUrl(t *testing.T) {
+	const baseUrl = "http://localhost:9999"
+	s := NewSteamworks()
+	steamid, err := s.ResolveVanityURL("")
+	assert.Equal(t, steamid, "")
+	assert.Equal(t, err, errors.New("vanityURL is required"))
 }
 
 func TestResolveVanityURLError_Forbidden(t *testing.T) {
@@ -64,9 +72,9 @@ func TestResolveVanityURLError_Forbidden(t *testing.T) {
 		Response:   Response403,
 	})
 
-	steamid2, err2 := s.ResolveVanityURL("forbidden-user-name")
-	assert.Equal(t, steamid2, "")
-	assert.Equal(t, err2, errors.New("403 Forbidden"))
+	steamid, err := s.ResolveVanityURL("forbidden-user-name")
+	assert.Equal(t, steamid, "")
+	assert.Equal(t, err, errors.New("403 Forbidden"))
 }
 
 var ResolveVanityURLResponse200 = ResolveVanityURLResponse{
