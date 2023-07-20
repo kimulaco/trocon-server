@@ -8,6 +8,7 @@ import (
 
 	"github.com/kimulaco/trocon-server/interface/sentry"
 	APIConfig "github.com/kimulaco/trocon-server/usecase/config"
+	GetSteamUserSearchAPI "github.com/kimulaco/trocon-server/usecase/handler/GetSteamUserSearch"
 	GetStatusAPI "github.com/kimulaco/trocon-server/usecase/handler/getStatus"
 	GetSteamUserAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUser"
 	GetSteamUserTrophyAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUserTrophy"
@@ -40,6 +41,7 @@ func main() {
 
 	e.GET("/api/steam/user/:steamid", GetSteamUserAPI.GetUser)
 	e.GET("/api/steam/user/:steamid/trophy", GetSteamUserTrophyAPI.GetSteamUserTrophy)
+	e.GET("/api/steam/user/search", GetSteamUserSearchAPI.GetSteamUserSearch)
 
 	e.Logger.Fatal(e.Start(APIConfig.GetListenPort("9000")))
 }
