@@ -12,13 +12,25 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type GetUserResponse struct {
+type GetSteamUserResponse struct {
 	StatusCode int               `json:"statusCode"`
 	User       steamworks.Player `json:"user"`
 	Games      []Game.Game       `json:"games"`
 }
 
-func GetUser(c echo.Context) error {
+// GetSteamUser
+//
+//	@Tags			Steam User
+//	@Description	Get server status.
+//	@Accept			json
+//	@Produce		json
+//	@Param			steamid	path		string	true	"Steam ID"
+//	@Success		200		{object}	GetSteamUserResponse
+//	@Failure		400		{object}	httputil.Error
+//	@Failure		404		{object}	httputil.Error
+//	@Failure		500		{object}	httputil.Error
+//	@Router			/api/steam/user/:steamid [get]
+func GetSteamUser(c echo.Context) error {
 	s := steamworks.NewSteamworks()
 	if s.InvalidEnv() {
 		errorLog("STEAM_USER_ENVIROMENT_ERROR: undefined steam API key")
@@ -62,7 +74,7 @@ func GetUser(c echo.Context) error {
 		return c.JSON(httputil.NewError500("STEAM_OWNED_GAME_INTERNAL_ERROR", ""))
 	}
 
-	return c.JSON(http.StatusOK, GetUserResponse{
+	return c.JSON(http.StatusOK, GetSteamUserResponse{
 		StatusCode: http.StatusOK,
 		User:       playerCh.player,
 		Games:      steamworks.MapOwnedGamesToGames(ownedGamesCh.ownedGames),

@@ -1,0 +1,232 @@
+definitions:
+  Game.Game:
+    properties:
+      appId:
+        type: integer
+      hasCommunityVisibleStats:
+        type: boolean
+      headerImgUrl:
+        type: string
+      iconImgUrl:
+        type: string
+      name:
+        type: string
+      playtime:
+        type: integer
+      rtimeLastPlayed:
+        type: integer
+      storeUrl:
+        type: string
+    type: object
+  GetStatusAPI.GetUserResponse:
+    properties:
+      statusCode:
+        type: integer
+    type: object
+  GetSteamUserAPI.GetSteamUserResponse:
+    properties:
+      games:
+        items:
+          $ref: '#/definitions/Game.Game'
+        type: array
+      statusCode:
+        type: integer
+      user:
+        $ref: '#/definitions/steamworks.Player'
+    type: object
+  GetSteamUserSearchAPI.GetSteamUserSearchResponse:
+    properties:
+      statusCode:
+        type: integer
+      steamid:
+        type: string
+    type: object
+  GetSteamUserTrophyAPI.SuccessResponse:
+    properties:
+      statusCode:
+        type: integer
+      trophies:
+        items:
+          $ref: '#/definitions/GetSteamUserTrophyAPI.Trophy'
+        type: array
+    type: object
+  GetSteamUserTrophyAPI.Trophy:
+    properties:
+      appId:
+        type: integer
+      gameName:
+        type: string
+      success:
+        type: boolean
+      trophies:
+        items:
+          $ref: '#/definitions/steamworks.Achievement'
+        type: array
+    type: object
+  httputil.Error:
+    properties:
+      errorCode:
+        type: string
+      message:
+        type: string
+      statusCode:
+        type: integer
+    type: object
+  steamworks.Achievement:
+    properties:
+      achieved:
+        type: integer
+      apiname:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      unlocktime:
+        type: integer
+    type: object
+  steamworks.Player:
+    properties:
+      avatar:
+        type: string
+      avatarFull:
+        type: string
+      avatarMedium:
+        type: string
+      communityVisibilityState:
+        type: integer
+      lastLogoff:
+        type: integer
+      personaName:
+        type: string
+      profileState:
+        type: integer
+      profileUrl:
+        type: string
+      steamId:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Rest API for Trocon.
+  title: Trocon API
+  version: "0.1"
+paths:
+  /api/status:
+    get:
+      consumes:
+      - application/json
+      description: Get server status.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetStatusAPI.GetUserResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/httputil.Error'
+            type: array
+      tags:
+      - Status
+  /api/steam/user/:steamid:
+    get:
+      consumes:
+      - application/json
+      description: Get server status.
+      parameters:
+      - description: Steam ID
+        in: path
+        name: steamid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetSteamUserAPI.GetSteamUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      tags:
+      - Steam User
+  /api/steam/user/:steamid/trophy:
+    get:
+      consumes:
+      - application/json
+      description: Get trophy list of steam user.
+      parameters:
+      - description: Steam ID
+        in: path
+        name: steamid
+        required: true
+        type: string
+      - description: Steam appid list
+        in: query
+        name: appid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetSteamUserTrophyAPI.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      tags:
+      - Steam User
+  /api/steam/user/search:
+    get:
+      consumes:
+      - application/json
+      description: Get steamid searched by keyword.
+      parameters:
+      - description: Steam ID or Steam vanity URL
+        in: query
+        name: q
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetSteamUserSearchAPI.GetSteamUserSearchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      tags:
+      - Steam User
+swagger: "2.0"

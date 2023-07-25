@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetUser_EnvError(t *testing.T) {
+func TestGetSteamUser_EnvError(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "")
 	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
@@ -22,7 +22,7 @@ func TestGetUser_EnvError(t *testing.T) {
 	c.SetParamNames("steamid")
 	c.SetParamValues("1")
 
-	if assert.NoError(t, GetUser(c)) {
+	if assert.NoError(t, GetSteamUser(c)) {
 		resBody, err := httputil.ReadBody[httputil.Error](rec.Result())
 		assert.Equal(t, 500, rec.Code)
 		assert.Equal(t, nil, err)
@@ -34,7 +34,7 @@ func TestGetUser_EnvError(t *testing.T) {
 	}
 }
 
-func TestGetUser_SteamidNotFound(t *testing.T) {
+func TestGetSteamUser_SteamidNotFound(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
 	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
@@ -42,7 +42,7 @@ func TestGetUser_SteamidNotFound(t *testing.T) {
 	c.SetParamNames("steamid")
 	c.SetParamValues("")
 
-	if assert.NoError(t, GetUser(c)) {
+	if assert.NoError(t, GetSteamUser(c)) {
 		resBody, err := httputil.ReadBody[httputil.Error](rec.Result())
 		assert.Equal(t, 400, rec.Code)
 		assert.Equal(t, nil, err)
@@ -54,7 +54,7 @@ func TestGetUser_SteamidNotFound(t *testing.T) {
 	}
 }
 
-func TestGetUser_PlayerNotFound(t *testing.T) {
+func TestGetSteamUser_PlayerNotFound(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
 	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
@@ -74,7 +74,7 @@ func TestGetUser_PlayerNotFound(t *testing.T) {
 	c.SetParamNames("steamid")
 	c.SetParamValues("1")
 
-	if assert.NoError(t, GetUser(c)) {
+	if assert.NoError(t, GetSteamUser(c)) {
 		resBody, err := httputil.ReadBody[httputil.Error](rec.Result())
 		assert.Equal(t, 404, rec.Code)
 		assert.Equal(t, nil, err)
@@ -86,7 +86,7 @@ func TestGetUser_PlayerNotFound(t *testing.T) {
 	}
 }
 
-func TestGetUser_FailGetPlayer(t *testing.T) {
+func TestGetSteamUser_FailGetPlayer(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
 	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
@@ -107,7 +107,7 @@ func TestGetUser_FailGetPlayer(t *testing.T) {
 	c.SetParamNames("steamid")
 	c.SetParamValues("1")
 
-	if assert.NoError(t, GetUser(c)) {
+	if assert.NoError(t, GetSteamUser(c)) {
 		resBody, err := httputil.ReadBody[httputil.Error](rec.Result())
 		assert.Equal(t, 500, rec.Code)
 		assert.Equal(t, nil, err)
@@ -119,7 +119,7 @@ func TestGetUser_FailGetPlayer(t *testing.T) {
 	}
 }
 
-func TestGetUser_FailGetGames(t *testing.T) {
+func TestGetSteamUser_FailGetGames(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
 	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
@@ -140,7 +140,7 @@ func TestGetUser_FailGetGames(t *testing.T) {
 	c.SetParamNames("steamid")
 	c.SetParamValues("1")
 
-	if assert.NoError(t, GetUser(c)) {
+	if assert.NoError(t, GetSteamUser(c)) {
 		resBody, err := httputil.ReadBody[httputil.Error](rec.Result())
 		assert.Equal(t, 500, rec.Code)
 		assert.Equal(t, nil, err)
@@ -152,7 +152,7 @@ func TestGetUser_FailGetGames(t *testing.T) {
 	}
 }
 
-func TestGetUser_200(t *testing.T) {
+func TestGetSteamUser_200(t *testing.T) {
 	t.Setenv("STEAM_API_KEY", "XXXXXXXX")
 	t.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 
@@ -172,15 +172,15 @@ func TestGetUser_200(t *testing.T) {
 	c.SetParamNames("steamid")
 	c.SetParamValues("1")
 
-	if assert.NoError(t, GetUser(c)) {
-		resBody, err := httputil.ReadBody[GetUserResponse](rec.Result())
+	if assert.NoError(t, GetSteamUser(c)) {
+		resBody, err := httputil.ReadBody[GetSteamUserResponse](rec.Result())
 		assert.Equal(t, 200, rec.Code)
 		assert.Equal(t, nil, err)
 		assert.Equal(t, SuccessResponse_200, resBody)
 	}
 }
 
-func BenchmarkGetUser_200(b *testing.B) {
+func BenchmarkGetSteamUser_200(b *testing.B) {
 	os.Setenv("STEAM_API_KEY", "XXXXXXXX")
 	os.Setenv("STEAM_API_BASE_URL", "http://localhost:9999")
 	defer os.Unsetenv("STEAM_API_KEY")
@@ -203,7 +203,7 @@ func BenchmarkGetUser_200(b *testing.B) {
 	c.SetParamValues("1")
 
 	for i := 0; i < b.N; i++ {
-		if err := GetUser(c); err != nil {
+		if err := GetSteamUser(c); err != nil {
 			b.Fatalf("Error during request: %s", err)
 		}
 		if rec.Code != http.StatusOK {
@@ -248,7 +248,7 @@ var GetOwnedGamesResponse_Empty = steamworks.GetOwnedGamesResponse{
 	},
 }
 
-var SuccessResponse_200 = GetUserResponse{
+var SuccessResponse_200 = GetSteamUserResponse{
 	StatusCode: 200,
 	User:       steamworks.TestUser,
 	Games:      []Game.Game{steamworks.TestGame1.ToGame(), steamworks.TestGame2.ToGame()},
