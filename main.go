@@ -2,10 +2,13 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoswagger "github.com/swaggo/echo-swagger"
 
+	_ "github.com/kimulaco/trocon-server/docs"
 	"github.com/kimulaco/trocon-server/interface/sentry"
 	APIConfig "github.com/kimulaco/trocon-server/usecase/config"
 	GetSteamUserSearchAPI "github.com/kimulaco/trocon-server/usecase/handler/GetSteamUserSearch"
@@ -14,7 +17,11 @@ import (
 	GetSteamUserTrophyAPI "github.com/kimulaco/trocon-server/usecase/handler/getSteamUserTrophy"
 )
 
+//	@title			Trocon API
+//	@version		0.1
+//	@description	Rest API for Trocon.
 func main() {
+	env := os.Getenv("BUILD_MODE")
 	err := sentry.Init()
 	if err != nil {
 		log.Fatalf("sentry.Init: %s", err)
@@ -39,9 +46,13 @@ func main() {
 
 	e.GET("/api/status", GetStatusAPI.GetStatus)
 
-	e.GET("/api/steam/user/:steamid", GetSteamUserAPI.GetUser)
+	e.GET("/api/steam/user/:steamid", GetSteamUserAPI.GetSteamUser)
 	e.GET("/api/steam/user/:steamid/trophy", GetSteamUserTrophyAPI.GetSteamUserTrophy)
 	e.GET("/api/steam/user/search", GetSteamUserSearchAPI.GetSteamUserSearch)
+
+	if env != "production" {
+		e.GET("/swagger/*", echoswagger.WrapHandler)
+	}
 
 	e.Logger.Fatal(e.Start(APIConfig.GetListenPort("9000")))
 }

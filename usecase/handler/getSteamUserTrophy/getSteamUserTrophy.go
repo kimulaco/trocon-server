@@ -27,6 +27,18 @@ type SuccessResponse struct {
 	Trophies   []Trophy `json:"trophies"`
 }
 
+// GetSteamUserTrophy
+//
+//	@Tags			Steam User
+//	@Description	Get trophy list of steam user.
+//	@Accept			json
+//	@Produce		json
+//	@Param			steamid	path		string	true	"Steam ID"
+//	@Param			appid	query		string	true	"Steam appid list"
+//	@Success		200		{object}	SuccessResponse
+//	@Failure		400		{object}	httputil.Error
+//	@Failure		500		{object}	httputil.Error
+//	@Router			/api/steam/user/:steamid/trophy [get]
 func GetSteamUserTrophy(c echo.Context) error {
 	s := steamworks.NewSteamworks()
 	if s.InvalidEnv() {

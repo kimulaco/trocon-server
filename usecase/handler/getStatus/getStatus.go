@@ -15,6 +15,15 @@ type GetUserResponse struct {
 	StatusCode int `json:"statusCode"`
 }
 
+// GetStatus
+//
+//	@Tags			Status
+//	@Description	Get server status.
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	GetUserResponse
+//	@Failure		500	{array}		httputil.Error
+//	@Router			/api/status [get]
 func GetStatus(c echo.Context) error {
 	s := steamworks.NewSteamworks()
 	if s.InvalidEnv() {

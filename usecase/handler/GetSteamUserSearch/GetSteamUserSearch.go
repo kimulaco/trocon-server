@@ -16,6 +16,18 @@ type GetSteamUserSearchResponse struct {
 	Steamid    string `json:"steamid"`
 }
 
+// GetSteamUserSearch
+//
+//	@Tags			Steam User
+//	@Description	Get steamid searched by keyword.
+//	@Accept			json
+//	@Produce		json
+//	@Param			q	query		string	true	"Steam ID or Steam vanity URL"
+//	@Success		200	{object}	GetSteamUserSearchResponse
+//	@Failure		400	{object}	httputil.Error
+//	@Failure		404	{object}	httputil.Error
+//	@Failure		500	{object}	httputil.Error
+//	@Router			/api/steam/user/search [get]
 func GetSteamUserSearch(c echo.Context) error {
 	s := steamworks.NewSteamworks()
 	if s.InvalidEnv() {
