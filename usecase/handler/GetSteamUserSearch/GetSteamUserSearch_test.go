@@ -83,15 +83,14 @@ func TestGetUser_NoMatchSteamID(t *testing.T) {
 	rec, c := testdata.InitEcho("/api/steam/user/search?q=testuser", "")
 
 	if assert.NoError(t, GetSteamUserSearch(c)) {
-		resBody, err := httputil.ReadBody[httputil.Error](rec.Result())
-		assert.Equal(t, 404, rec.Code)
+		resBody, err := httputil.ReadBody[GetSteamUserSearchResponse](rec.Result())
+		assert.Equal(t, 200, rec.Code)
 		assert.Equal(t, nil, err)
 		assert.Equal(
 			t,
-			httputil.Error{
-				StatusCode: 404,
-				ErrorCode:  "STEAM_USER_SEARCH_FAIL_GET_PLAYER_SUMMARY",
-				Message:    "User not found",
+			GetSteamUserSearchResponse{
+				StatusCode: 200,
+				Users:      make([]steamworks.Player, 0, 0),
 			},
 			resBody,
 		)
@@ -124,15 +123,14 @@ func TestGetUser_NoMatchVanityURL(t *testing.T) {
 	rec, c := testdata.InitEcho("/api/steam/user/search?q=testuser", "")
 
 	if assert.NoError(t, GetSteamUserSearch(c)) {
-		resBody, err := httputil.ReadBody[httputil.Error](rec.Result())
-		assert.Equal(t, 404, rec.Code)
+		resBody, err := httputil.ReadBody[GetSteamUserSearchResponse](rec.Result())
+		assert.Equal(t, 200, rec.Code)
 		assert.Equal(t, nil, err)
 		assert.Equal(
 			t,
-			httputil.Error{
-				StatusCode: 404,
-				ErrorCode:  "STEAM_USER_SEARCH_FAIL_RESOLVE_VANITY_URL",
-				Message:    "User not found",
+			GetSteamUserSearchResponse{
+				StatusCode: 200,
+				Users:      make([]steamworks.Player, 0, 0),
 			},
 			resBody,
 		)
@@ -185,7 +183,7 @@ func TestGetUser_ErrorSteam(t *testing.T) {
 
 var SuccessResponse_200 = GetSteamUserSearchResponse{
 	StatusCode: 200,
-	Steamid:    steamworks.TestUser.SteamID,
+	Users:      []steamworks.Player{steamworks.TestUser},
 }
 
 var GetPlayerSummaryResponse_200 = steamworks.GetPlayerSummaryResponse{

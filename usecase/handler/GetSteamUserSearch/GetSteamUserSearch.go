@@ -12,14 +12,14 @@ import (
 )
 
 type GetSteamUserSearchResponse struct {
-	StatusCode int    `json:"statusCode"`
-	Steamid    string `json:"steamid"`
+	StatusCode int                 `json:"statusCode"`
+	Users      []steamworks.Player `json:"users"`
 }
 
 // GetSteamUserSearch
 //
 //	@Tags			Steam User
-//	@Description	Get steamid searched by keyword.
+//	@Description	Get steam user by Steam ID or Steam vanity URL.
 //	@Accept			json
 //	@Produce		json
 //	@Param			q	query		string	true	"Steam ID or Steam vanity URL"
@@ -40,41 +40,53 @@ func GetSteamUserSearch(c echo.Context) error {
 		return c.JSON(httputil.NewError400("STEAM_USER_SEARCH_Q_NOT_FOUND", "q not found"))
 	}
 
-	queryPlayer, err := s.GetPlayerSummary(q)
-	if err == nil && !queryPlayer.IsEmpty() {
-		return c.JSON(http.StatusOK, GetSteamUserSearchResponse{
-			StatusCode: http.StatusOK,
-			Steamid:    queryPlayer.SteamID,
-		})
+	MAX_LENGTH := 2
+	playerChan := make(chan steamworks.Player, MAX_LENGTH)
+	users := make([]steamworks.Player, 0, MAX_LENGTH)
+
+	go getPlayerWithID(s, q, playerChan)
+	go getPlayerWithVanityURL(s, q, playerChan)
+
+	for i := 0; i < MAX_LENGTH; i++ {
+		_user := <-playerChan
+		if !_user.IsEmpty() {
+			users = append(users, _user)
+		}
 	}
+
+	return c.JSON(http.StatusOK, GetSteamUserSearchResponse{
+		StatusCode: http.StatusOK,
+		Users:      users,
+	})
+}
+
+func getPlayerWithID(
+	s steamworks.Steamworks, steamid string, ch chan steamworks.Player,
+) {
+	player, err := s.GetPlayerSummary(steamid)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
+	ch <- player
+}
+
+func getPlayerWithVanityURL(
+	s steamworks.Steamworks, q string, ch chan steamworks.Player,
+) {
 	steamid, err := s.ResolveVanityURL(q)
 	if err != nil {
 		log.Println(err.Error())
-		return c.JSON(httputil.NewError404(
-			"STEAM_USER_SEARCH_FAIL_RESOLVE_VANITY_URL",
-			"User not found",
-		))
+		ch <- steamworks.Player{}
+		return
 	}
 
-	idPlayer, err := s.GetPlayerSummary(steamid)
-	if err == nil && !idPlayer.IsEmpty() {
-		return c.JSON(http.StatusOK, GetSteamUserSearchResponse{
-			StatusCode: http.StatusOK,
-			Steamid:    idPlayer.SteamID,
-		})
-	}
+	player, err := s.GetPlayerSummary(steamid)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	return c.JSON(httputil.NewError404(
-		"STEAM_USER_SEARCH_FAIL_GET_PLAYER_SUMMARY",
-		"User not found",
-	))
+	ch <- player
 }
 
 func errorLog(s string) {

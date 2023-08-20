@@ -38,8 +38,10 @@ definitions:
     properties:
       statusCode:
         type: integer
-      steamid:
-        type: string
+      users:
+        items:
+          $ref: '#/definitions/steamworks.Player'
+        type: array
     type: object
   GetSteamUserTrophyAPI.SuccessResponse:
     properties:
@@ -201,7 +203,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get steamid searched by keyword.
+      description: Get steam user by Steam ID or Steam vanity URL.
       parameters:
       - description: Steam ID or Steam vanity URL
         in: query
