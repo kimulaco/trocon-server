@@ -185,7 +185,7 @@ func TestGetUser_ErrorSteam(t *testing.T) {
 
 var SuccessResponse_200 = GetSteamUserSearchResponse{
 	StatusCode: 200,
-	Steamid:    steamworks.TestUser.SteamID,
+	Users:      []steamworks.Player{steamworks.TestUser},
 }
 
 var GetPlayerSummaryResponse_200 = steamworks.GetPlayerSummaryResponse{

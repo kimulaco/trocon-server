@@ -12,14 +12,14 @@ import (
 )
 
 type GetSteamUserSearchResponse struct {
-	StatusCode int    `json:"statusCode"`
-	Steamid    string `json:"steamid"`
+	StatusCode int                 `json:"statusCode"`
+	Users      []steamworks.Player `json:"users"`
 }
 
 // GetSteamUserSearch
 //
 //	@Tags			Steam User
-//	@Description	Get steamid searched by keyword.
+//	@Description	Get steam user by Steam ID or Steam vanity URL.
 //	@Accept			json
 //	@Produce		json
 //	@Param			q	query		string	true	"Steam ID or Steam vanity URL"
@@ -44,7 +44,7 @@ func GetSteamUserSearch(c echo.Context) error {
 	if err == nil && !queryPlayer.IsEmpty() {
 		return c.JSON(http.StatusOK, GetSteamUserSearchResponse{
 			StatusCode: http.StatusOK,
-			Steamid:    queryPlayer.SteamID,
+			Users:      []steamworks.Player{queryPlayer},
 		})
 	}
 	if err != nil {
@@ -64,7 +64,7 @@ func GetSteamUserSearch(c echo.Context) error {
 	if err == nil && !idPlayer.IsEmpty() {
 		return c.JSON(http.StatusOK, GetSteamUserSearchResponse{
 			StatusCode: http.StatusOK,
-			Steamid:    idPlayer.SteamID,
+			Users:      []steamworks.Player{idPlayer},
 		})
 	}
 	if err != nil {
