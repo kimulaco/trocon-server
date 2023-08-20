@@ -148,7 +148,7 @@ const docTemplate = `{
         },
         "/api/steam/user/search": {
             "get": {
-                "description": "Get steamid searched by keyword.",
+                "description": "Get steam user by Steam ID or Steam vanity URL.",
                 "consumes": [
                     "application/json"
                 ],
@@ -257,8 +257,11 @@ const docTemplate = `{
                 "statusCode": {
                     "type": "integer"
                 },
-                "steamid": {
-                    "type": "string"
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/steamworks.Player"
+                    }
                 }
             }
         },
