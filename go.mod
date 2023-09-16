@@ -3,7 +3,7 @@ module github.com/kimulaco/trocon-server
 go 1.20
 
 require (
-	github.com/getsentry/sentry-go v0.24.0
+	github.com/getsentry/sentry-go v0.24.1
 	github.com/h2non/gock v1.2.0
 	github.com/labstack/echo/v4 v4.11.1
 	github.com/stretchr/testify v1.8.4
