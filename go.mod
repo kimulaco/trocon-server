@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/getsentry/sentry-go v0.25.0
 	github.com/h2non/gock v1.2.0
-	github.com/labstack/echo/v4 v4.11.2
+	github.com/labstack/echo/v4 v4.11.3
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.2
